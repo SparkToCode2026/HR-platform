@@ -18,8 +18,9 @@
 
         public string LocationStreet { get; set; }
 
+
         //nevegation property
         public List<Department> Departments { get; set; }
 
-    }
-}
+
+    } }
