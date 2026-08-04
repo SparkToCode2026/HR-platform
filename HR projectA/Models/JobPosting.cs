@@ -1,3 +1,5 @@
+using ProjectX.Models;
+
 namespace HRP.Models;
 
 public class JobPosting
@@ -12,8 +14,8 @@ public class JobPosting
     public int CompanyID { get; set; }
 
     public Department? Department { get; set; }
-    public JobCategory? JobCategory { get; set; }
-    public Company? Company { get; set; }
+    public JopCategory? JobCategory { get; set; }
+    public company? Company { get; set; }
     public List<Application> Applications { get; set; } = new();
     public List<JobPostingSkill> JobPostingSkills { get; set; } = new();
 }
