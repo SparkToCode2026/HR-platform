@@ -1,3 +1,5 @@
+using HRP.Models;
+
 namespace ProjectX.Models;
 
 public class JopCategory
@@ -7,5 +9,5 @@ public class JopCategory
     public string JopCategoryDesc { get; set; }
     
     
-  //  public List<"Jopposting"> JopPosting {get; set; } // navigation property
+   public List<JobPosting> JopPosting {get; set; } // navigation property
 }
