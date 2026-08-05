@@ -70,7 +70,16 @@ namespace ProjectX.Controllers
             return Ok("User deactivated");
         }
 
-       
+        //Get: Get all users
+        [HttpGet("GetAll")]
+        public IActionResult GetAllUsers()
+        {
+            var users = context.users.ToList();
+            return Ok(users);
+        }
+
+
+
 
 
     }
