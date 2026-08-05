@@ -19,9 +19,11 @@ namespace ProjectX.Models
 
         [ForeignKey("User")]
         public int UserId { get; set; }
+        public User User { get; set; }
 
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
+        public company Company { get; set; }
     }
 }
 
