@@ -90,6 +90,15 @@ namespace ProjectX.Controllers
             return Ok(companies);
         }
 
+        // GET: Aggregate JobPostings
+        [HttpGet("AggregateJobPostings")]
+        public IActionResult AggregateJobPostings()
+        {
+            var result = context.Companies
+                .Select(c => new { c.CompanyName, JobCount = c.JobPostings.Count })
+                .ToList();
+            return Ok(result);
+        }
 
     }
 }
