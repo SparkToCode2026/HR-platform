@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace HRP.Models;
-{
     public class Offer
     {
     public int OfferID { get; set; }
@@ -12,8 +11,10 @@ namespace HRP.Models;
     public string JobTitle { get; set; } = string.Empty;
 
     //Foreign key
-    public int ApplicationID { get; set; } = string.Empty;
+    public int ApplicationID { get; set; }
 
+    // Navigation property
+    public Application Application { get; set; } = null!;
 
 
 }
