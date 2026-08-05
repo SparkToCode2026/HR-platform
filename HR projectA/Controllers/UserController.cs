@@ -95,4 +95,17 @@ namespace ProjectX.Controllers
         }
 
 
-}
+        // GET: Aggregate by Role
+        [HttpGet("AggregateByRole")]
+        public IActionResult AggregateByRole()
+        {
+            var result = context.users
+                .GroupBy(x => x.Role)
+                .Select(g => new { Role = g.Key, Count = g.Count() })
+                .ToList();
+            return Ok(result);
+        }
+
+
+
+    }
