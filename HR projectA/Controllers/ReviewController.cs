@@ -27,7 +27,23 @@ namespace ProjectX.Controllers
         }
         
         // Case 2 (PUT/PATCH): Edit existing review text or rating score.
-        
+        [HttpPut("UpdateReview")]
+        public IActionResult UpdateReview(int id, Review newReview)
+        {
+            Review r = context.Reviews.FirstOrDefault(r => r.ReviewId == id);
+            
+            if (r == null)
+            {
+                return NotFound("Review not found");
+            }
+            
+            r.Comment = newReview.Comment;
+            r.Rating = newReview.Rating;
+            
+            context.SaveChanges();
+            
+            return Ok();
+        }
         
         // Case 3 (PUT/PATCH): Admin approval status update (e.g., mark as "Approved" or "Flagged").
         
