@@ -28,5 +28,5 @@ namespace ProjectX.Models
 
         public List<Notification> Notifications { get; set; }
 
-
+         
     } }
