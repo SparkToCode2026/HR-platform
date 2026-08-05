@@ -33,7 +33,7 @@ namespace ProjectX.Controllers
             context.SaveChanges();
             return Ok(u.UserId);
         }
-        //
+        
         // PUT: Update Profile
         [HttpPut("UpdateProfile")]
         public IActionResult UpdateProfile(int id, User updatedUser)
@@ -47,6 +47,17 @@ namespace ProjectX.Controllers
             context.SaveChanges();
             return Ok("Profile updated");
         }
+
+        //Put: Change Password
+        [HttpPut("ChangePassword")] public IActionResult ChangePassword(int id, string newPassword) {
+            var u = context.users.FirstOrDefault(x => x.UserId == id);
+            if (u == null) return NotFound();
+
+            u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            context.SaveChanges();
+            return Ok("Password changed");
+        }
+        
 
     }
 }
