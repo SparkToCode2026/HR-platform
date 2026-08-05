@@ -14,6 +14,9 @@ namespace ProjectX.Models
 
         [Required]
         public string Comment { get; set; }
+        
+        [Required]
+        public string Status { get; set; }
 
         [ForeignKey("User")]
         public int UserId { get; set; }
