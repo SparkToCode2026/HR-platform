@@ -7,5 +7,11 @@
         public string Summary { get; set; }
         public string Education { get; set; }
 
+        // Foreign Key
+        public int UserId { get; set; }
+
+        // Navigation
+        public User User { get; set; }
+
     }
 }
