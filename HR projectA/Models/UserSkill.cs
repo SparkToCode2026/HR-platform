@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectX.Models
 {
-    [PrimaryKey(nameof(Skill_id), nameof(UserId)]
+    [PrimaryKey(nameof(Skill_id), nameof(UserId))]
     public class UserSkill
     {
         [ForeignKey("skill")]
