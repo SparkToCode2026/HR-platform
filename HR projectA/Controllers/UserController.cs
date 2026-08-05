@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BCrypt.Net;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using ProjectX.Models;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BCrypt.Net;
-using ProjectX.Models;
 
 namespace ProjectX.Controllers
 {
@@ -85,7 +86,13 @@ namespace ProjectX.Controllers
             return Ok(u);
         }
 
+        //Get:filter users by role
+        [HttpGet("FilterByRole")]
+        public IActionResult FilterByRole(string role) {
+            var users = context.users.Where(x => x.Role == role).ToList();
+          
+           return Ok(users);
+        }
 
 
-    }
 }
