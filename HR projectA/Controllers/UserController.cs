@@ -33,5 +33,20 @@ namespace ProjectX.Controllers
             context.SaveChanges();
             return Ok(u.UserId);
         }
+        //
+        // PUT: Update Profile
+        [HttpPut("UpdateProfile")]
+        public IActionResult UpdateProfile(int id, User updatedUser)
+        {
+            var u = context.users.FirstOrDefault(x => x.UserId == id);
+            if (u == null) return NotFound();
+
+            u.Username = updatedUser.Username;
+            u.Email = updatedUser.Email;
+            u.PhoneNumber = updatedUser.PhoneNumber;
+            context.SaveChanges();
+            return Ok("Profile updated");
+        }
+
     }
 }
