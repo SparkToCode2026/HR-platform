@@ -57,7 +57,21 @@ namespace ProjectX.Controllers
             context.SaveChanges();
             return Ok("Password changed");
         }
-        
+
+        //Delete: Deactivate User
+        [HttpDelete("Deactivate")]
+        public IActionResult Deactivate(int id)
+        {
+            var u = context.users.FirstOrDefault(x => x.UserId == id);
+            if (u == null) return NotFound();
+
+            u.IsActive = false;
+            context.SaveChanges();
+            return Ok("User deactivated");
+        }
+
+       
+
 
     }
 }
