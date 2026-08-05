@@ -1,3 +1,6 @@
+
+using ProjectX.Models;
+
 namespace HRP.Models;
 
 public class Application
@@ -11,4 +14,6 @@ public class Application
     public JobPosting? JobPosting { get; set; }
     public Interview? Interview { get; set; }
     public Offer? Offer { get; set; }
+    private List<Review> _reviews { get; set; }
+     
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using ProjectX.Models;
 
 namespace HRP.Models;
@@ -9,8 +10,11 @@ public class JobPosting
     public string AcademicDegree { get; set; } = string.Empty;
     public int PositionsAvailable { get; set; }
     public DateTime JobDeadline { get; set; }
+    [ForeignKey("Department")]
     public int DepartmentID { get; set; }
+    [ForeignKey("JobCategory")]
     public int JobCategoryID { get; set; }
+    [ForeignKey("Company")]
     public int CompanyID { get; set; }
 
     public Department? Department { get; set; }
