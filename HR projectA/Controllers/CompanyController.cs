@@ -42,6 +42,17 @@ namespace ProjectX.Controllers
         }
 
         //
+        // PUT: Toggle Verification
+        [HttpPut("ToggleVerification")]
+        public IActionResult ToggleVerification(int id, bool status)
+        {
+            var c = context.Companies.FirstOrDefault(x => x.CompanyId == id);
+            if (c == null) return NotFound();
+            c.IsVerified = status;
+            context.SaveChanges();
+            return Ok("Verification status updated");
+        }
+
 
     }
 }
