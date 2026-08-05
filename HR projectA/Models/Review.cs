@@ -16,9 +16,11 @@ namespace ProjectX.Models
 
         [ForeignKey("User")]
         public int UserId { get; set; }
+        public User User { get; set; }
 
         [ForeignKey("Application")]
         public int ApplicationId { get; set; }
+        public Application Application { get; set; }
     }
 }
 
