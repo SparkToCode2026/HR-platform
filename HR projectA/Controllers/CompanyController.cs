@@ -74,5 +74,14 @@ namespace ProjectX.Controllers
             return Ok(companies);
         }
 
+        // GET: Get Company by Id
+        [HttpGet("GetCompany")]
+        public IActionResult GetCompany(int id)
+        {
+            var c = context.Companies.FirstOrDefault(x => x.CompanyId == id);
+            return Ok(c);
+        }
+
+
     }
 }
