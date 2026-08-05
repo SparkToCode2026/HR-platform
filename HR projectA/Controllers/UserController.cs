@@ -78,7 +78,12 @@ namespace ProjectX.Controllers
             return Ok(users);
         }
 
-
+        //Get: Get user by id
+        [HttpGet("GetById")] public IActionResult GetUser(int id) {
+            var u = context.users.FirstOrDefault(x => x.UserId == id);
+            if (u == null) return NotFound();
+            return Ok(u);
+        }
 
 
 
