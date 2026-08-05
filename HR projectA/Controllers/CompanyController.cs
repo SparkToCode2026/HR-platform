@@ -65,7 +65,14 @@ namespace ProjectX.Controllers
             return Ok("Company removed successfully");
         }
 
-        //
+        // 
+        // GET: Get All Companies
+        [HttpGet("GetAllCompanies")]
+        public IActionResult GetAllCompanies()
+        {
+            var companies = context.Companies.ToList();
+            return Ok(companies);
+        }
 
     }
 }
