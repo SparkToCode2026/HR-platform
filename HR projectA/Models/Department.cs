@@ -8,6 +8,7 @@ public class Department
 
     public string DepartmentName { get; set; }
     public String DepartmentDesc { get; set; }
+    
     [ForeignKey("CompanyA")]
     public int CompanyId { get; set; }
     public company CompanyA { get; set; }
