@@ -1,31 +1,37 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using BCrypt.Net;
 using ProjectX.Models;
 
 namespace ProjectX.Controllers
 {
+    [ApiController]
+    [Route("User")]
     public class UserController
     {
-        ProjectContext context = new ProjectContext();
-        public void AddUser()
+
+        private readonly ProjectContext context;
+        private readonly IConfiguration config;
+
+        public UserController(ProjectContext _context, IConfiguration _config)
         {
-            // Logic to create a new user
-            User U=new User();
-            Console.WriteLine("Enter your username:");
-            U.Username = Console.ReadLine();
-            Console.WriteLine("Enter User ID:");
-            U.UserId = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Enter your email:");
-            U.Email = Console.ReadLine();
-            Console.WriteLine("Enter your password:");
-            U.Password = Console.ReadLine();
-            Console.WriteLine("Enter your role (Admin/Candidate/Employer):");
-            U.Role = Console.ReadLine();
-
-            context.Users.Add(U);
-            context.SaveChanges();
-
+            context = _context;
+            config = _config;
         }
 
+        //Post :Register User\Employee\Admin
+        [HttpPost]
+        [Route("Register")]
 
+        public IActionResult Register(User u)
+        {
+            u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(u.PasswordHash);
+            context.users.Add(u);
+            context.SaveChanges();
+            return Ok(u.UserId);
+        }
     }
 }
