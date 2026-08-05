@@ -1,3 +1,6 @@
+using HRP.Models;
+using ProjectX.Models;
+
 namespace ProjectX.Models;
 
 public class User
