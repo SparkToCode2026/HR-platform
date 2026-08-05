@@ -1,4 +1,6 @@
-﻿namespace ProjectX.Models
+﻿using HRP.Models;
+
+namespace ProjectX.Models
 {
     public class company
     {
@@ -22,5 +24,9 @@
         //nevegation property
         public List<Department> Departments { get; set; }
 
+        public List<JobPosting> JobPostings { get; set; }
 
+        public List<Notification> Notifications { get; set; }
+
+         
     } }
