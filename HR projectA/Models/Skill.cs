@@ -6,10 +6,5 @@
         public string Skill_Name { get; set; }
         public string Skill_Category { get; set; }
 
-
-        //Navigation:
-        
-
-        
     }
 }
