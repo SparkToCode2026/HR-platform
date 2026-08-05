@@ -82,6 +82,14 @@ namespace ProjectX.Controllers
             return Ok(c);
         }
 
+        // GET: Filter Companies
+        [HttpGet("FilterByIndustry")]
+        public IActionResult FilterByIndustry(string industry)
+        {
+            var companies = context.Companies.Where(x => x.Industry == industry).ToList();
+            return Ok(companies);
+        }
+
 
     }
 }
