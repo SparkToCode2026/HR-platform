@@ -17,5 +17,10 @@ public class JobPosting
     public JopCategory? JobCategory { get; set; }
     public company? Company { get; set; }
     public List<Application> Applications { get; set; } = new();
-    public List<JobPostingSkill> JobPostingSkills { get; set; } = new();
+    public List<JobPostingSkill> JobPostingSkills { get; set; }
+
+
+
+
+
 }

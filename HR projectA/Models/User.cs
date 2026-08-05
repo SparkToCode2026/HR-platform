@@ -10,4 +10,7 @@ public class User
     public string Role { get; set; }
 
 
+    public List<UserSkill> UserSkills { get; set; }
+
+
 }
