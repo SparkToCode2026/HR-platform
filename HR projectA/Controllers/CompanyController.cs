@@ -53,6 +53,19 @@ namespace ProjectX.Controllers
             return Ok("Verification status updated");
         }
 
+        //Delete: Delete Company
+        [HttpDelete("DeleteCompany")]
+        public IActionResult RemoveCompany(int id)
+        {
+            var c = context.Companies.FirstOrDefault(x => x.CompanyId == id);
+            if (c == null) return NotFound();
+
+            context.Companies.Remove(c);
+            context.SaveChanges();
+            return Ok("Company removed successfully");
+        }
+
+        //
 
     }
 }
