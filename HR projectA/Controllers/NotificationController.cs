@@ -97,6 +97,20 @@ namespace ProjectX.Controllers
         }
         
         // Case 6 (GET - Find): Get notification details by NotificationId.
+        [HttpGet("GetNotificationById")]
+        public IActionResult GetNotificationById(int id)
+        {
+            Notification notification = context.Notifications
+                .Include(n => n.User)
+                .FirstOrDefault(n => n.NotificationId == id);
+
+            if (notification == null)
+            {
+                return NotFound("Notification not found");
+            }
+
+            return Ok(notification);
+        }
         
         // Case 7 (GET - Filter): Filter notifications to get unread items for a specific user.
         
