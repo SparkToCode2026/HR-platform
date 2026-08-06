@@ -97,7 +97,23 @@ namespace ProjectX.Controllers
         }
         
         // Case 6 (GET - Find): Get review by ReviewId.
-        
+        [HttpGet("GetReview/{id}")]
+        public IActionResult GetReview(int id)
+        {
+            Review? review = context.Reviews
+                .Include(r => r.User)
+                .Include(r => r.Application)
+                .ThenInclude(a => a.JobPosting)
+                .ThenInclude(j => j.Company)
+                .FirstOrDefault(r => r.ReviewId == id);
+
+            if (review == null)
+            {
+                return NotFound("Review not found");
+            }
+
+            return Ok(review);
+        }
         // Case 7 (GET - Filter): Filter reviews by rating score (e.g., 4+ stars).
         
         // Case 8 (GET - Sort/Aggregate): Calculate average rating score (Average) per company.
