@@ -148,3 +148,40 @@ public class InterviewsController : ControllerBase
 
         return Ok(interviews);
     }
+
+    // Case 6: GET Find
+    // Find one interview by ID
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetInterviewById(int id)
+    {
+        var interview = await _context.Interviews
+            .AsNoTracking()
+            .Include(i => i.Application)
+            .Where(i => i.InterviewID == id)
+            .Select(i => new
+            {
+                i.InterviewID,
+                i.InterviewDate,
+                i.InterviewType,
+                i.InterviewStage,
+                i.Result_Offer,
+                i.ApplicationID,
+
+                Application = new
+                {
+                    i.Application.ApplicationID,
+                    i.Application.AppliedAt,
+                    i.Application.ApplicationStatus,
+                    i.Application.JobPostingID
+                }
+            })
+            .FirstOrDefaultAsync();
+
+        if (interview == null)
+        {
+            return NotFound("Interview not found.");
+        }
+
+        return Ok(interview);
+    }
+
