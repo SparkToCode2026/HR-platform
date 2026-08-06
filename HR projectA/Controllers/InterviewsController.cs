@@ -208,3 +208,18 @@ public class InterviewsController : ControllerBase
 
         return Ok(interviews);
     }
+
+    // Case 8: GET Sort
+    // Get upcoming interviews ordered chronologically
+    [HttpGet("upcoming")]
+    public async Task<IActionResult> GetUpcomingInterviews()
+    {
+        var interviews = await _context.Interviews
+            .AsNoTracking()
+            .Where(i => i.InterviewDate >= DateTime.Now)
+            .OrderBy(i => i.InterviewDate)
+            .ToListAsync();
+
+        return Ok(interviews);
+    }
+}
