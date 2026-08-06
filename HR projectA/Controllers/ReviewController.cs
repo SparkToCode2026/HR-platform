@@ -114,6 +114,7 @@ namespace ProjectX.Controllers
 
             return Ok(review);
         }
+        
         // Case 7 (GET - Filter): Filter reviews by rating score (e.g., 4+ stars).
         [HttpGet("FilterByRating/{rating}")]
         public IActionResult FilterByRating(int rating)
@@ -133,6 +134,24 @@ namespace ProjectX.Controllers
 
             return Ok(reviews);
         }
+        
         // Case 8 (GET - Sort/Aggregate): Calculate average rating score (Average) per company.
+        [HttpGet("AverageRatingPerCompany")]
+        public IActionResult AverageRatingPerCompany()
+        {
+            var result = context.Reviews
+                .Include(r => r.Application)
+                .ThenInclude(a => a.JobPosting)
+                .ThenInclude(j => j.Company)
+                .GroupBy(r => r.Application.JobPosting.Company!.CompanyName)
+                .Select(g => new
+                {
+                    Company = g.Key,
+                    AverageRating = g.Average(r => r.Rating)
+                })
+                .ToList();
+
+            return Ok(result);
+        }
     }
 }
