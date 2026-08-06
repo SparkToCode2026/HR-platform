@@ -100,3 +100,21 @@ public class InterviewsController : ControllerBase
 
         return Ok(interview);
     }
+
+    // Case 4: DELETE
+    // Delete an interview
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteInterview(int id)
+    {
+        var interview = await _context.Interviews.FindAsync(id);
+
+        if (interview == null)
+        {
+            return NotFound("Interview not found.");
+        }
+
+        _context.Interviews.Remove(interview);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
