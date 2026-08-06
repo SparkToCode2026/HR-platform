@@ -67,6 +67,22 @@ namespace ProjectX.Controllers
             return Ok();
         }
         // Case 4 (DELETE): Clear/delete a notification record.
+        [HttpDelete("DeleteNotification")]
+        public IActionResult DeleteNotification(int id)
+        {
+            Notification n = context.Notifications.FirstOrDefault(n => n.NotificationId == id);
+
+            if (n == null)
+            {
+                return NotFound("Notification not found");
+            }
+
+            context.Notifications.Remove(n);
+
+            context.SaveChanges();
+
+            return Ok("Notification deleted successfully");
+        }
         
         // Case 5 (GET - List): Fetch notifications including recipient User details.
         
