@@ -118,3 +118,33 @@ public class InterviewsController : ControllerBase
 
         return NoContent();
     }
+
+    // Case 5: GET List
+    // Get all interviews with Application details
+    [HttpGet]
+    public async Task<IActionResult> GetAllInterviews()
+    {
+        var interviews = await _context.Interviews
+            .AsNoTracking()
+            .Include(i => i.Application)
+            .Select(i => new
+            {
+                i.InterviewID,
+                i.InterviewDate,
+                i.InterviewType,
+                i.InterviewStage,
+                i.Result_Offer,
+                i.ApplicationID,
+
+                Application = new
+                {
+                    i.Application.ApplicationID,
+                    i.Application.AppliedAt,
+                    i.Application.ApplicationStatus,
+                    i.Application.JobPostingID
+                }
+            })
+            .ToListAsync();
+
+        return Ok(interviews);
+    }
