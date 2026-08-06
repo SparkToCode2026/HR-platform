@@ -125,5 +125,14 @@ namespace ProjectX.Controllers
         }
         
         // Case 8 (GET - Sort/Aggregate): Count total unread notifications for a user (Count).
+        [HttpGet("CountUnreadNotifications")]
+        public IActionResult CountUnreadNotifications(int userId)
+        {
+            int count = context.Notifications
+                .Where(n => n.UserId == userId && n.Status == "Unread")
+                .Count();
+
+            return Ok(count);
+        }
     }
 }
