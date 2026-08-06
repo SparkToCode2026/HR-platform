@@ -223,3 +223,31 @@ public class InterviewsController : ControllerBase
         return Ok(interviews);
     }
 }
+
+// Data required when creating an interview
+public class CreateInterviewRequest
+{
+    public DateTime InterviewDate { get; set; }
+
+    public string InterviewType { get; set; } = string.Empty;
+
+    public string InterviewStage { get; set; } = string.Empty;
+
+    public int ApplicationID { get; set; }
+}
+
+// Data required when rescheduling an interview
+public class RescheduleInterviewRequest
+{
+    public DateTime InterviewDate { get; set; }
+
+    public string InterviewType { get; set; } = string.Empty;
+}
+
+// Data required when recording the result
+public class UpdateInterviewResultRequest
+{
+    public string InterviewStage { get; set; } = string.Empty;
+
+    public string? Result_Offer { get; set; }
+}
