@@ -185,3 +185,26 @@ public class InterviewsController : ControllerBase
         return Ok(interview);
     }
 
+    // Case 7: GET Filter
+    // Filter interviews between two dates
+    [HttpGet("filter-by-date")]
+    public async Task<IActionResult> FilterInterviewsByDate(
+        DateTime startDate,
+        DateTime endDate)
+    {
+        if (startDate > endDate)
+        {
+            return BadRequest(
+                "The start date cannot be after the end date.");
+        }
+
+        var interviews = await _context.Interviews
+            .AsNoTracking()
+            .Where(i =>
+                i.InterviewDate >= startDate &&
+                i.InterviewDate <= endDate)
+            .OrderBy(i => i.InterviewDate)
+            .ToListAsync();
+
+        return Ok(interviews);
+    }
