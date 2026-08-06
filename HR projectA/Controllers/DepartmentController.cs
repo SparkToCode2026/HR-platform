@@ -57,20 +57,21 @@ public class DepartmentController:ControllerBase
         return Ok(departments);
     }
 
+    [HttpGet ("Get departmentinfo")]
     public IActionResult Getdepartment(int id)
     {
         Department DeptA = Context.Departments.FirstOrDefault(d => d.DepartmentID == id);
         
         return Ok(DeptA);
     }
-
+[HttpGet("filter departments by company")]
     public IActionResult FilterDepartments(int id)
     {
         List<Department> DepartmensB = Context.Departments.Where(D => D.CompanyId == id).ToList();
         return Ok(DepartmensB);
 
     }
-
+[HttpGet("Sort Department alphabatically")]
     public IActionResult SortDepartment(){
         List<Department> departments = Context.Departments
             .OrderBy(d => d.DepartmentName)
