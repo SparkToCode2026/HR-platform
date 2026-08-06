@@ -51,3 +51,30 @@ public class InterviewsController : ControllerBase
             new { id = interview.InterviewID },
             interview);
     }
+
+    // Case 2: PUT
+    // Reschedule an interview
+    [HttpPut("{id}/reschedule")]
+    public async Task<IActionResult> RescheduleInterview(
+        int id,
+        RescheduleInterviewRequest request)
+    {
+        var interview = await _context.Interviews.FindAsync(id);
+
+        if (interview == null)
+        {
+            return NotFound("Interview not found.");
+        }
+
+        if (request.InterviewDate <= DateTime.Now)
+        {
+            return BadRequest("The interview date must be in the future.");
+        }
+
+        interview.InterviewDate = request.InterviewDate;
+        interview.InterviewType = request.InterviewType;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(interview);
+    }
