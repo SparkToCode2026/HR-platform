@@ -78,3 +78,25 @@ public class InterviewsController : ControllerBase
 
         return Ok(interview);
     }
+
+    // Case 3: PATCH
+    // Update the interview stage and result
+    [HttpPatch("{id}/result")]
+    public async Task<IActionResult> UpdateInterviewResult(
+        int id,
+        UpdateInterviewResultRequest request)
+    {
+        var interview = await _context.Interviews.FindAsync(id);
+
+        if (interview == null)
+        {
+            return NotFound("Interview not found.");
+        }
+
+        interview.InterviewStage = request.InterviewStage;
+        interview.Result_Offer = request.Result_Offer;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(interview);
+    }
