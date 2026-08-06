@@ -26,6 +26,23 @@ namespace ProjectX.Controllers
         }
         
         // Case 2 (PUT/PATCH): Update notification content or target URL.
+        [HttpPatch("UpdateNotification")]
+        public IActionResult UpdateNotification(int id, Notification newNotification)
+        {
+            Notification n = context.Notifications.FirstOrDefault(n => n.NotificationId == id);
+
+            if (n == null)
+            {
+                return NotFound("Notification not found");
+            }
+
+            n.NotificationMessage = newNotification.NotificationMessage;
+            n.Type = newNotification.Type;
+
+            context.SaveChanges();
+
+            return Ok();
+        }
         
         // Case 3 (PUT/PATCH): Mark notification status as "Read" or "Unread".
         
