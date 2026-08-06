@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectX.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjectX.Controllers
 {
@@ -85,6 +86,15 @@ namespace ProjectX.Controllers
         }
         
         // Case 5 (GET - List): Fetch notifications including recipient User details.
+        [HttpGet("GetAllNotifications")]
+        public IActionResult GetAllNotifications()
+        {
+            List<Notification> notifications = context.Notifications
+                .Include(n => n.User)
+                .ToList();
+
+            return Ok(notifications);
+        }
         
         // Case 6 (GET - Find): Get notification details by NotificationId.
         
