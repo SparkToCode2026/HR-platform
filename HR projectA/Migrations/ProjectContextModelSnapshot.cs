@@ -49,7 +49,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
                 });
 
             modelBuilder.Entity("HRP.Models.Interview", b =>
@@ -81,7 +81,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("ApplicationID");
 
-                    b.ToTable("Interviews");
+                    b.ToTable("Interviews", (string)null);
                 });
 
             modelBuilder.Entity("HRP.Models.JobPosting", b =>
@@ -118,7 +118,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("JobCategoryID");
 
-                    b.ToTable("JobPostings");
+                    b.ToTable("JobPostings", (string)null);
                 });
 
             modelBuilder.Entity("HRP.Models.Offer", b =>
@@ -148,7 +148,7 @@ namespace ProjectX.Migrations
                     b.HasIndex("ApplicationID")
                         .IsUnique();
 
-                    b.ToTable("Offers");
+                    b.ToTable("Offers", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.Department", b =>
@@ -174,7 +174,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.JobPostingSkill", b =>
@@ -189,7 +189,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("Skill_id");
 
-                    b.ToTable("JobPostingSkills");
+                    b.ToTable("JobPostingSkills", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.JopCategory", b =>
@@ -210,7 +210,7 @@ namespace ProjectX.Migrations
 
                     b.HasKey("JopCategoryid");
 
-                    b.ToTable("JopCategories");
+                    b.ToTable("JopCategories", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.Notification", b =>
@@ -244,7 +244,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.Resume", b =>
@@ -275,7 +275,7 @@ namespace ProjectX.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Resumes");
+                    b.ToTable("Resumes", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.Review", b =>
@@ -305,7 +305,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.Skill", b =>
@@ -326,7 +326,7 @@ namespace ProjectX.Migrations
 
                     b.HasKey("Skill_id");
 
-                    b.ToTable("Skills");
+                    b.ToTable("Skills", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.User", b =>
@@ -355,7 +355,7 @@ namespace ProjectX.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.UserSkill", b =>
@@ -370,7 +370,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSkills");
+                    b.ToTable("UserSkills", (string)null);
                 });
 
             modelBuilder.Entity("ProjectX.Models.company", b =>
@@ -411,7 +411,7 @@ namespace ProjectX.Migrations
 
                     b.HasKey("CompanyId");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("HRP.Models.Application", b =>
