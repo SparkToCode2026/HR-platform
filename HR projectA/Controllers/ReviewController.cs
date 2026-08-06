@@ -58,6 +58,11 @@ namespace ProjectX.Controllers
                 return NotFound("Review not found");
             }
 
+            if (status != "Approved" && status != "Flagged")
+            {
+                return BadRequest("Status must be 'Approved' or 'Flagged'.");
+            }
+            
             r.Status = status;
 
             context.SaveChanges();
@@ -150,6 +155,11 @@ namespace ProjectX.Controllers
                     AverageRating = g.Average(r => r.Rating)
                 })
                 .ToList();
+            
+            if (!result.Any())
+            {
+                return NotFound("No reviews found.");
+            }
 
             return Ok(result);
         }
