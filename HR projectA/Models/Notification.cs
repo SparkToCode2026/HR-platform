@@ -16,6 +16,9 @@ namespace ProjectX.Models
 
         [Required]
         public DateTime DateTime { get; set; }
+        
+        [Required]
+        public string Status { get; set; }
 
         [ForeignKey("User")]
         public int UserId { get; set; }

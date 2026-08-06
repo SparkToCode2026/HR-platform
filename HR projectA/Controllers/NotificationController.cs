@@ -45,7 +45,27 @@ namespace ProjectX.Controllers
         }
         
         // Case 3 (PUT/PATCH): Mark notification status as "Read" or "Unread".
-        
+        [HttpPatch("UpdateNotificationStatus")]
+        public IActionResult UpdateNotificationStatus(int id, string status)
+        {
+            Notification n = context.Notifications.FirstOrDefault(n => n.NotificationId == id);
+
+            if (n == null)
+            {
+                return NotFound("Notification not found");
+            }
+            
+            if (status != "Read" && status != "Unread")
+            {
+                return BadRequest("Status must be 'Read' or 'Unread'.");
+            }
+
+            n.Status = status;
+
+            context.SaveChanges();
+
+            return Ok();
+        }
         // Case 4 (DELETE): Clear/delete a notification record.
         
         // Case 5 (GET - List): Fetch notifications including recipient User details.
