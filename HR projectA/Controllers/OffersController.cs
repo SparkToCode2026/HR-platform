@@ -103,6 +103,26 @@ public class OffersController : ControllerBase
         return Ok(offer);
     }
 
+    // Case 4: Delete an offer
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteOffer(int id)
+    {
+        var offer = await _context.Offers.FindAsync(id);
+
+        if (offer == null)
+        {
+            return NotFound("Offer not found.");
+        }
+
+        _context.Offers.Remove(offer);
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+
+
 
 
 
