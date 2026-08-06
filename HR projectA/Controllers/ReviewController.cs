@@ -115,7 +115,24 @@ namespace ProjectX.Controllers
             return Ok(review);
         }
         // Case 7 (GET - Filter): Filter reviews by rating score (e.g., 4+ stars).
-        
+        [HttpGet("FilterByRating/{rating}")]
+        public IActionResult FilterByRating(int rating)
+        {
+            List<Review> reviews = context.Reviews
+                .Include(r => r.User)
+                .Include(r => r.Application)
+                .ThenInclude(a => a.JobPosting)
+                .ThenInclude(j => j.Company)
+                .Where(r => r.Rating >= rating)
+                .ToList();
+
+            if (reviews.Count == 0)
+            {
+                return NotFound("No reviews found.");
+            }
+
+            return Ok(reviews);
+        }
         // Case 8 (GET - Sort/Aggregate): Calculate average rating score (Average) per company.
     }
 }
