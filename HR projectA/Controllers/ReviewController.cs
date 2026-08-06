@@ -83,6 +83,18 @@ namespace ProjectX.Controllers
         }
         
         // Case 5 (GET - List): Fetch reviews including related Company and reviewer User details.
+        [HttpGet("GetAllReviews")]
+        public IActionResult GetAllReviews()
+        {
+            List<Review> reviews = context.Reviews
+                .Include(r => r.User)
+                .Include(r => r.Application)
+                .ThenInclude(a => a.JobPosting)
+                .ThenInclude(j => j.Company)
+                .ToList();
+
+            return Ok(reviews);
+        }
         
         // Case 6 (GET - Find): Get review by ReviewId.
         
