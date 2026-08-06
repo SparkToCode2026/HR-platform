@@ -113,6 +113,16 @@ namespace ProjectX.Controllers
         }
         
         // Case 7 (GET - Filter): Filter notifications to get unread items for a specific user.
+        [HttpGet("GetUnreadNotifications")]
+        public IActionResult GetUnreadNotifications(int userId)
+        {
+            List<Notification> notifications = context.Notifications
+                .Where(n => n.UserId == userId && n.Status == "Unread")
+                .Include(n => n.User)
+                .ToList();
+
+            return Ok(notifications);
+        }
         
         // Case 8 (GET - Sort/Aggregate): Count total unread notifications for a user (Count).
     }
