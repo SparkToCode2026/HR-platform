@@ -121,7 +121,33 @@ public class OffersController : ControllerBase
         return NoContent();
     }
 
+    // Case 5: Get all offers with application details
+    [HttpGet]
+    public async Task<IActionResult> GetAllOffers()
+    {
+        var offers = await _context.Offers
+            .AsNoTracking()
+            .Include(o => o.Application)
+            .Select(o => new
+            {
+                o.OfferID,
+                o.ProposalSalary,
+                o.OfferState,
+                o.JobTitle,
+                o.ApplicationID,
 
+                Application = new
+                {
+                    o.Application.ApplicationID,
+                    o.Application.AppliedAt,
+                    o.Application.ApplicationStatus,
+                    o.Application.JobPostingID
+                }
+            })
+            .ToListAsync();
+
+        return Ok(offers);
+    }
 
 
 
