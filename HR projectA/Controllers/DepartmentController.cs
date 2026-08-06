@@ -70,6 +70,13 @@ public class DepartmentController:ControllerBase
         return Ok(DepartmensB);
 
     }
+
+    public IActionResult SortDepartment(){
+        List<Department> departments = Context.Departments
+            .OrderBy(d => d.DepartmentName)
+            .ToList();
+        return Ok(departments);
+    }
     
 
 
