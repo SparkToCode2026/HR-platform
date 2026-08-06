@@ -183,6 +183,24 @@ public class OffersController : ControllerBase
         return Ok(offer);
     }
 
+    // Case 7: Filter offers by state
+    [HttpGet("filter-by-state")]
+    public async Task<IActionResult> FilterOffersByState(string state)
+    {
+        if (string.IsNullOrWhiteSpace(state))
+        {
+            return BadRequest("Offer state is required.");
+        }
+
+        var offers = await _context.Offers
+            .AsNoTracking()
+            .Where(o => o.OfferState.ToLower() == state.ToLower())
+            .OrderBy(o => o.OfferID)
+            .ToListAsync();
+
+        return Ok(offers);
+    }
+
 
 
 
