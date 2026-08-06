@@ -45,17 +45,35 @@ public class DepartmentController:ControllerBase
         Context.SaveChanges();
 
     } // enter the Department id , to see the comapny detalis that belong to
-    [HttpGet("Get company detail")]
-    public company Return_Company(int id)
-    {
-        var Company = Context.Departments
-            .Where(d => d.DepartmentID == id)
-            .Select(d => d.CompanyA) // Projects directly to the Company object
-            .FirstOrDefault();
 
-        return Company;
+    [HttpGet("Get All Department")]
+    
+    public IActionResult GetAllDepartments()
+    {
+        List<Department> departments = Context.Departments
+            .Include(d => d.CompanyA)
+            .ToList();
+
+        return Ok(departments);
+    }
+
+    public IActionResult Getdepartment(int id)
+    {
+        Department DeptA = Context.Departments.FirstOrDefault(d => d.DepartmentID == id);
+        
+        return Ok(DeptA);
+    }
+
+    public IActionResult FilterDepartments(int id)
+    {
+        List<Department> DepartmensB = Context.Departments.Where(D => D.CompanyId == id).ToList();
+        return Ok(DepartmensB);
+
     }
     
-    
-    
+
+
+
+
+
 }
