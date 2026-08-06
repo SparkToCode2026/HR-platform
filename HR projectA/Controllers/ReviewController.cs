@@ -47,7 +47,7 @@ namespace ProjectX.Controllers
         }
         
         // Case 3 (PUT/PATCH): Admin approval status update (e.g., mark as "Approved" or "Flagged").
-        [Authorize(Roles = "Admin")] // Only administrators should be able to approve or flag reviews
+        [Authorize(Roles = "Admin")] // only administrators should be able to approve/flag reviews
         [HttpPatch("UpdateReviewStatus")]
         public IActionResult UpdateReviewStatus(int id, string status)
         {
@@ -64,7 +64,23 @@ namespace ProjectX.Controllers
 
             return Ok();
         }
+        
         // Case 4 (DELETE): Delete an inappropriate or obsolete review.
+        [HttpDelete("DeleteReview")]
+        public IActionResult DeleteReview(int id)
+        {
+            Review r = context.Reviews.FirstOrDefault(r => r.ReviewId == id);
+
+            if (r == null)
+            {
+                return NotFound("Review not found");
+            }
+
+            context.Reviews.Remove(r);
+            context.SaveChanges();
+
+            return Ok("Review deleted successfully");
+        }
         
         // Case 5 (GET - List): Fetch reviews including related Company and reviewer User details.
         
