@@ -57,4 +57,30 @@ public class OffersController : ControllerBase
             new { id = offer.OfferID },
             offer);
     }
+    // Case 2: Update salary and job title
+    [HttpPut("{id}/details")]
+    public async Task<IActionResult> UpdateOfferDetails(
+        int id,
+        UpdateOfferDetailsRequest request)
+    {
+        var offer = await _context.Offers.FindAsync(id);
+
+        if (offer == null)
+        {
+            return NotFound("Offer not found.");
+        }
+
+        if (request.ProposalSalary <= 0)
+        {
+            return BadRequest("The proposed salary must be greater than zero.");
+        }
+
+        offer.ProposalSalary = request.ProposalSalary;
+        offer.JobTitle = request.JobTitle;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(offer);
+    }
+
 
