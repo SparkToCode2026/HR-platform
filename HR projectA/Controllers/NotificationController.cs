@@ -120,6 +120,11 @@ namespace ProjectX.Controllers
                 .Where(n => n.UserId == userId && n.Status == "Unread")
                 .Include(n => n.User)
                 .ToList();
+            
+            if (!notifications.Any())
+            {
+                return NotFound("No unread notifications found.");
+            }
 
             return Ok(notifications);
         }
