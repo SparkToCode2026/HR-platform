@@ -149,6 +149,40 @@ public class OffersController : ControllerBase
         return Ok(offers);
     }
 
+    // case 6: Find an offer by ID
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetOfferById(int id)
+    {
+        var offer = await _context.Offers
+            .AsNoTracking()
+            .Include(o => o.Application)
+            .Where(o => o.OfferID == id)
+            .Select(o => new
+            {
+                o.OfferID,
+                o.ProposalSalary,
+                o.OfferState,
+                o.JobTitle,
+                o.ApplicationID,
+
+                Application = new
+                {
+                    o.Application.ApplicationID,
+                    o.Application.AppliedAt,
+                    o.Application.ApplicationStatus,
+                    o.Application.JobPostingID
+                }
+            })
+            .FirstOrDefaultAsync();
+
+        if (offer == null)
+        {
+            return NotFound("Offer not found.");
+        }
+
+        return Ok(offer);
+    }
+
 
 
 
