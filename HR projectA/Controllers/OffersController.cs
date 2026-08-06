@@ -83,4 +83,26 @@ public class OffersController : ControllerBase
         return Ok(offer);
     }
 
+    // Case 3: Update offer state
+    [HttpPatch("{id}/state")]
+    public async Task<IActionResult> UpdateOfferState(
+        int id,
+        UpdateOfferStateRequest request)
+    {
+        var offer = await _context.Offers.FindAsync(id);
+
+        if (offer == null)
+        {
+            return NotFound("Offer not found.");
+        }
+
+        offer.OfferState = request.OfferState;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(offer);
+    }
+
+
+
 
