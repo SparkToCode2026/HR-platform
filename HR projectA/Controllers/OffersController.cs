@@ -221,6 +221,34 @@ public class OffersController : ControllerBase
     }
 }
 
+// Data required when creating an offer
+public class CreateOfferRequest
+{
+    public decimal ProposalSalary { get; set; }
+
+    public string OfferState { get; set; } = string.Empty;
+
+    public string JobTitle { get; set; } = string.Empty;
+
+    public int ApplicationID { get; set; }
+}
+
+
+// Data required when updating offer details
+public class UpdateOfferDetailsRequest
+{
+    public decimal ProposalSalary { get; set; }
+
+    public string JobTitle { get; set; } = string.Empty;
+}
+
+
+// Data required when updating offer state
+public class UpdateOfferStateRequest
+{
+    public string OfferState { get; set; } = string.Empty;
+}
+
 
 
 
