@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ProjectX.Models
 {
     public class Notification
     {
         [Key]
+        [JsonIgnore]
         public int NotificationId { get; set; }
 
         [Required]
@@ -19,10 +21,12 @@ namespace ProjectX.Models
 
         [ForeignKey("User")]
         public int UserId { get; set; }
+        [JsonIgnore]
         public User User { get; set; }
 
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
+        [JsonIgnore]
         public company Company { get; set; }
     }
 }
