@@ -1,9 +1,10 @@
-﻿using HRP.Models;
+﻿using System.Text.Json.Serialization;
+using HRP.Models;
 
 namespace ProjectX.Models
 {
     public class company
-    {
+    {[JsonIgnore]
         public int CompanyId { get; set; }
 
         public string CompanyName { get; set; }
@@ -25,10 +26,11 @@ namespace ProjectX.Models
 
 
         //nevegation property
+        [JsonIgnore]
         public List<Department> Departments { get; set; }
-
+        [JsonIgnore]
         public List<JobPosting> JobPostings { get; set; }
-
+        [JsonIgnore]
         public List<Notification> Notifications { get; set; }
 
          

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using HRP.Models;
 using ProjectX.Models;
 
@@ -5,6 +6,7 @@ namespace ProjectX.Models;
 
 public class User
 {
+    [JsonIgnore]
     // user properties
     public int UserId { get; set; }
     public string Username { get; set; }
@@ -16,15 +18,15 @@ public class User
     public bool IsActive { get; set; } = true;
 
     //user navigation properties
-
+[JsonIgnore]
     public Resume Resume { get; set; }
-
+[JsonIgnore]
     public List<UserSkill> UserSkills { get; set; }
-
+[JsonIgnore]
     public List<Application> Applications { get; set; }
-
+[JsonIgnore]
     public List<Notification> Notifications { get; set; }
-
+[JsonIgnore]
     public List<Review> Reviews { get; set; }
  
 
