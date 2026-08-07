@@ -14,5 +14,5 @@ public class JopCategory
     public String CategorysTATUS { get; set; }
     
     [JsonIgnore]
-   public List<JobPosting> JopPosting {get; set; } // navigation property
+   public List<JobPosting>? JopPosting {get; set; } // navigation property
 }
