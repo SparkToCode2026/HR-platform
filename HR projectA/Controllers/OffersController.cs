@@ -201,6 +201,26 @@ public class OffersController : ControllerBase
         return Ok(offers);
     }
 
+    // Case 8: Sort offers by proposed salary
+    [HttpGet("sort-by-salary")]
+    public async Task<IActionResult> SortOffersBySalary(
+        bool descending = false)
+    {
+        var query = _context.Offers.AsNoTracking();
+
+        var offers = descending
+            ? await query
+                .OrderByDescending(o => o.ProposalSalary)
+                .ToListAsync()
+
+            : await query
+                .OrderBy(o => o.ProposalSalary)
+                .ToListAsync();
+
+        return Ok(offers);
+    }
+}
+
 
 
 
