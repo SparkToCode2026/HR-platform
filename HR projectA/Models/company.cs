@@ -19,6 +19,9 @@ namespace ProjectX.Models
         public string Email { get; set; }
 
         public string LocationStreet { get; set; }
+        
+        
+        public bool IsVerified  { get; set; }
 
 
         //nevegation property

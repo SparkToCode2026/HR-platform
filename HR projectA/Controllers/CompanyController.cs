@@ -6,7 +6,7 @@ namespace ProjectX.Controllers
 
     [ApiController]
     [Route("Company")]
-    public class CompanyController
+    public class CompanyController:ControllerBase
     {
         private readonly ProjectContext context;
 

@@ -11,7 +11,7 @@ namespace ProjectX.Controllers
 {
     [ApiController]
     [Route("User")]
-    public class UserController
+    public class UserController : ControllerBase
     {
 
         private readonly ProjectContext context;
@@ -34,7 +34,7 @@ namespace ProjectX.Controllers
             context.SaveChanges();
             return Ok(u.UserId);
         }
-        
+
         // PUT: Update Profile
         [HttpPut("UpdateProfile")]
         public IActionResult UpdateProfile(int id, User updatedUser)
@@ -50,7 +50,9 @@ namespace ProjectX.Controllers
         }
 
         //Put: Change Password
-        [HttpPut("ChangePassword")] public IActionResult ChangePassword(int id, string newPassword) {
+        [HttpPut("ChangePassword")]
+        public IActionResult ChangePassword(int id, string newPassword)
+        {
             var u = context.users.FirstOrDefault(x => x.UserId == id);
             if (u == null) return NotFound();
 
@@ -80,7 +82,9 @@ namespace ProjectX.Controllers
         }
 
         //Get: Get user by id
-        [HttpGet("GetById")] public IActionResult GetUser(int id) {
+        [HttpGet("GetById")]
+        public IActionResult GetUser(int id)
+        {
             var u = context.users.FirstOrDefault(x => x.UserId == id);
             if (u == null) return NotFound();
             return Ok(u);
@@ -88,10 +92,11 @@ namespace ProjectX.Controllers
 
         //Get:filter users by role
         [HttpGet("FilterByRole")]
-        public IActionResult FilterByRole(string role) {
+        public IActionResult FilterByRole(string role)
+        {
             var users = context.users.Where(x => x.Role == role).ToList();
-          
-           return Ok(users);
+
+            return Ok(users);
         }
 
 
@@ -115,6 +120,7 @@ namespace ProjectX.Controllers
             {
                 return Unauthorized("Invalid credentials");
             }
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(config["Jwt:Key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -125,7 +131,8 @@ namespace ProjectX.Controllers
                     new(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
@@ -135,3 +142,4 @@ namespace ProjectX.Controllers
 
 
     }
+}
