@@ -1,99 +1,134 @@
+using HRP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HRP.Models;
+using ProjectX.Models;
 
-namespace HRP.Controllers
+namespace ProjectX.Controllers;
+
+[ApiController]
+[Route("ApplicationsController")]
+public class ApplicationsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ApplicationsController : ControllerBase
+    private ProjectContext Context;
+
+    public ApplicationsController(ProjectContext _Context)
     {
-        private readonly AppDbContext _context;
+        Context = _Context;
+    }
 
-        public ApplicationsController(AppDbContext context)
+    [HttpPost("Add Application")]
+    public void ADD_Application(Application A)
+    {
+        Context.Applications.Add(A);
+        Context.SaveChanges();
+    }
+
+    [HttpPatch("Update Application Status")]
+    public IActionResult Update_Application_Status(int Id, string Status)
+    {
+        Application Updated_App = Context.Applications.FirstOrDefault(A => A.ApplicationID == Id);
+        if (Updated_App == null)
         {
-            _context = context;
+            return NotFound("such application does not exist");
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Application>>> GetApplications()
+        // Assuming your Application model has a Status property
+        Updated_App.ApplicationStatus= Status;
+        Context.Applications.Update(Updated_App);
+        Context.SaveChanges();
+        return Ok("updated");
+    }
+
+    [HttpPatch("Update Application Job")]
+    public IActionResult Update_Application_Job(int Id, int JobPostingId)
+    {
+        Application Updated_App = Context.Applications.FirstOrDefault(A => A.ApplicationID == Id);
+        if (Updated_App == null)
         {
-            return await _context.Applications
-                .Include(a => a.JobPosting)
-                .Include(a => a.Interviews)
-                .Include(a => a.Offers)
-                .ToListAsync();
+            return NotFound("application not found");
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Application>> GetApplication(int id)
+        Updated_App.JobPostingID = JobPostingId;
+        Context.Applications.Update(Updated_App);
+        Context.SaveChanges();
+        return Ok("updated");
+    }
+
+    [HttpDelete("Delete Application")]
+    public IActionResult Remove_Application(int Id)
+    {
+        Application Removed_Application = Context.Applications.FirstOrDefault(A => A.ApplicationID == Id);
+        if (Removed_Application == null)
         {
-            var application = await _context.Applications
-                .Include(a => a.JobPosting)
-                .Include(a => a.Interviews)
-                .Include(a => a.Offers)
-                .FirstOrDefaultAsync(a => a.ApplicationID == id);
-
-            if (application == null)
-            {
-                return NotFound();
-            }
-
-            return application;
+            return NotFound("Application not found");
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Application>> PostApplication(Application application)
-        {
-            _context.Applications.Add(application);
-            await _context.SaveChangesAsync();
+        Context.Applications.Remove(Removed_Application);
+        Context.SaveChanges();
+        return Ok("removed successfully");
+    }
 
-            return CreatedAtAction(nameof(GetApplication), new { id = application.ApplicationID }, application);
+    [HttpGet("Get All Application")]
+    public IActionResult GetAllApplications()
+    {
+        List<Application> applications = Context.Applications
+            .Include(a => a.JobPosting)
+            .Include(a => a.Interviews)
+            .Include(a => a.Offer)
+            .ToList();
+
+        if (applications.Count == 0)
+        {
+            return NotFound("No application found");
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutApplication(int id, Application application)
+        return Ok(applications);
+    }
+
+    [HttpGet("Get applicationinfo")]
+    public IActionResult Getapplication(int id)
+    {
+        Application AppA = Context.Applications
+            .Include(a => a.JobPosting)
+            .Include(a => a.Interviews)
+            .Include(a => a.Offer)
+            .FirstOrDefault(a => a.ApplicationID == id);
+
+        if (AppA == null)
         {
-            if (id != application.ApplicationID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(application).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Applications.Any(e => e.ApplicationID == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return NotFound("Application not found");
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteApplication(int id)
+        return Ok(AppA);
+    }
+
+    [HttpGet("filter applications by job posting")]
+    public IActionResult FilterApplications(int id)
+    {
+        List<Application> ApplicationsB = Context.Applications
+            .Where(A => A.JobPostingID == id)
+            .ToList();
+
+        if (ApplicationsB.Count == 0)
         {
-            var application = await _context.Applications.FindAsync(id);
-            if (application == null)
-            {
-                return NotFound();
-            }
-
-            _context.Applications.Remove(application);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return NotFound("no applications found");
         }
+
+        return Ok(ApplicationsB);
+    }
+
+    [HttpGet("Sort Application by date")]
+    public IActionResult SortApplication()
+    {
+        List<Application> applications = Context.Applications
+            .OrderByDescending(a => a.ApplicationID)
+            .ToList();
+
+        if (applications.Count == 0)
+        {
+            return NotFound("no applications found");
+        }
+
+        return Ok(applications);
     }
 }
-
