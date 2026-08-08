@@ -10,6 +10,10 @@ public class Application
     public int ApplicationID { get; set; }
     public DateTime AppliedAt { get; set; }
     public string ApplicationStatus { get; set; } = string.Empty;
+   
+    [ForeignKey("UserA")]
+    public int UserId { get; set; }
+    public User UserA { get; set; }
     [ForeignKey("JobPosting")]
     public int JobPostingID { get; set; }
     public JobPosting? JobPosting { get; set; }
