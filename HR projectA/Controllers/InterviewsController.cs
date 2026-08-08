@@ -1,253 +1,170 @@
 ﻿using HRP.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectX.Models;
+
 
 namespace ProjectX.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("InterviewsController")]
 public class InterviewsController : ControllerBase
 {
-    private readonly ProjectContext _context;
+    private ProjectContext Context;
+    private readonly EmailSender emailSender;
 
-    public InterviewsController(ProjectContext context)
+    public InterviewsController(ProjectContext _Context, EmailSender _emailSender)
     {
-        _context = context;
+        Context = _Context;
+        emailSender = _emailSender;
     }
 
     // Case 1: POST
-    // Schedule a new interview
-    [HttpPost]
-    public async Task<IActionResult> CreateInterview(
-        CreateInterviewRequest request)
+    [HttpPost("Add Interview")]
+    public async Task<IActionResult> ADD_Interview(Interview I)
     {
-        var applicationExists = await _context.Applications
-            .AnyAsync(a => a.ApplicationID == request.ApplicationID);
-
-        if (!applicationExists)
-        {
-            return BadRequest("The application does not exist.");
-        }
-
-        if (request.InterviewDate <= DateTime.Now)
+        if (I.InterviewDate <= DateTime.Now)
         {
             return BadRequest("The interview date must be in the future.");
         }
 
-        var interview = new Interview
-        {
-            InterviewDate = request.InterviewDate,
-            InterviewType = request.InterviewType,
-            InterviewStage = request.InterviewStage,
-            Result_Offer = null,
-            ApplicationID = request.ApplicationID
-        };
+        Context.Interviews.Add(I);
+        Context.SaveChanges();
 
-        _context.Interviews.Add(interview);
-        await _context.SaveChangesAsync();
+        // Trigger Domain Email Requirement
+        string candidateEmail = "candidate@example.com"; // Fetch candidate's email from DB/Application
+        string subject = "Interview Scheduled";
+        string body = $"<h3>Interview Details</h3><p>Your interview is scheduled for <b>{I.InterviewDate}</b> via {I.InterviewType}.</p>";
 
-        return CreatedAtAction(
-            nameof(GetInterviewById),
-            new { id = interview.InterviewID },
-            interview);
+        await emailSender.SendEmailAsync(candidateEmail, subject, body);
+
+        return Ok("Interview scheduled and email sent successfully");
     }
 
-    // Case 2: PUT
-    // Reschedule an interview
-    [HttpPut("{id}/reschedule")]
-    public async Task<IActionResult> RescheduleInterview(
-        int id,
-        RescheduleInterviewRequest request)
+    // Case 2: PUT/PATCH - Reschedule
+    [HttpPatch("Reschedule Interview")]
+    public IActionResult Reschedule_Interview(int Id, DateTime NewDate, string Type)
     {
-        var interview = await _context.Interviews.FindAsync(id);
-
-        if (interview == null)
+        Interview Updated_Interview = Context.Interviews.FirstOrDefault(i => i.InterviewID == Id);
+        if (Updated_Interview == null)
         {
-            return NotFound("Interview not found.");
+            return NotFound("Interview not found");
         }
 
-        if (request.InterviewDate <= DateTime.Now)
+        if (NewDate <= DateTime.Now)
         {
             return BadRequest("The interview date must be in the future.");
         }
 
-        interview.InterviewDate = request.InterviewDate;
-        interview.InterviewType = request.InterviewType;
+        Updated_Interview.InterviewDate = NewDate;
+        Updated_Interview.InterviewType = Type;
 
-        await _context.SaveChangesAsync();
-
-        return Ok(interview);
+        Context.Interviews.Update(Updated_Interview);
+        Context.SaveChanges();
+        return Ok("Rescheduled successfully");
     }
 
-    // Case 3: PATCH
-    // Update the interview stage and result
-    [HttpPatch("{id}/result")]
-    public async Task<IActionResult> UpdateInterviewResult(
-        int id,
-        UpdateInterviewResultRequest request)
+    // Case 3: PUT/PATCH - Update Stage & Result
+    [HttpPatch("Update Interview Result")]
+    public IActionResult Update_Interview_Result(int Id, string Stage, string Result)
     {
-        var interview = await _context.Interviews.FindAsync(id);
-
-        if (interview == null)
+        Interview Updated_Interview = Context.Interviews.FirstOrDefault(i => i.InterviewID == Id);
+        if (Updated_Interview == null)
         {
-            return NotFound("Interview not found.");
+            return NotFound("Interview not found");
         }
 
-        interview.InterviewStage = request.InterviewStage;
-        interview.Result_Offer = request.Result_Offer;
+        Updated_Interview.InterviewStage = Stage;
+        Updated_Interview.Result_Offer = Result;
 
-        await _context.SaveChangesAsync();
-
-        return Ok(interview);
+        Context.Interviews.Update(Updated_Interview);
+        Context.SaveChanges();
+        return Ok("Result updated successfully");
     }
 
     // Case 4: DELETE
-    // Delete an interview
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteInterview(int id)
+    [HttpDelete("Delete Interview")]
+    public IActionResult Remove_Interview(int Id)
     {
-        var interview = await _context.Interviews.FindAsync(id);
-
-        if (interview == null)
+        Interview Removed_Interview = Context.Interviews.FirstOrDefault(i => i.InterviewID == Id);
+        if (Removed_Interview == null)
         {
-            return NotFound("Interview not found.");
+            return NotFound("Interview not found");
         }
 
-        _context.Interviews.Remove(interview);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        Context.Interviews.Remove(Removed_Interview);
+        Context.SaveChanges();
+        return Ok("Removed successfully");
     }
 
-    // Case 5: GET List
-    // Get all interviews with Application details
-    [HttpGet]
-    public async Task<IActionResult> GetAllInterviews()
+    // Case 5: GET List (with Include)
+    [HttpGet("Get All Interviews")]
+    public IActionResult GetAllInterviews()
     {
-        var interviews = await _context.Interviews
-            .AsNoTracking()
+        List<Interview> interviews = Context.Interviews
             .Include(i => i.Application)
-            .Select(i => new
-            {
-                i.InterviewID,
-                i.InterviewDate,
-                i.InterviewType,
-                i.InterviewStage,
-                i.Result_Offer,
-                i.ApplicationID,
+            .ToList();
 
-                Application = new
-                {
-                    i.Application.ApplicationID,
-                    i.Application.AppliedAt,
-                    i.Application.ApplicationStatus,
-                    i.Application.JobPostingID
-                }
-            })
-            .ToListAsync();
+        if (interviews.Count == 0)
+        {
+            return NotFound("No interviews found");
+        }
 
         return Ok(interviews);
     }
 
     // Case 6: GET Find
-    // Find one interview by ID
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetInterviewById(int id)
+    [HttpGet("Get interview info")]
+    public IActionResult GetInterview(int Id)
     {
-        var interview = await _context.Interviews
-            .AsNoTracking()
+        Interview interview = Context.Interviews
             .Include(i => i.Application)
-            .Where(i => i.InterviewID == id)
-            .Select(i => new
-            {
-                i.InterviewID,
-                i.InterviewDate,
-                i.InterviewType,
-                i.InterviewStage,
-                i.Result_Offer,
-                i.ApplicationID,
-
-                Application = new
-                {
-                    i.Application.ApplicationID,
-                    i.Application.AppliedAt,
-                    i.Application.ApplicationStatus,
-                    i.Application.JobPostingID
-                }
-            })
-            .FirstOrDefaultAsync();
+            .FirstOrDefault(i => i.InterviewID == Id);
 
         if (interview == null)
         {
-            return NotFound("Interview not found.");
+            return NotFound("Interview not found");
         }
 
         return Ok(interview);
     }
 
     // Case 7: GET Filter
-    // Filter interviews between two dates
-    [HttpGet("filter-by-date")]
-    public async Task<IActionResult> FilterInterviewsByDate(
-        DateTime startDate,
-        DateTime endDate)
+    [HttpGet("Filter interviews by date")]
+    public IActionResult FilterInterviewsByDate(DateTime startDate, DateTime endDate)
     {
         if (startDate > endDate)
         {
-            return BadRequest(
-                "The start date cannot be after the end date.");
+            return BadRequest("The start date cannot be after the end date.");
         }
 
-        var interviews = await _context.Interviews
-            .AsNoTracking()
-            .Where(i =>
-                i.InterviewDate >= startDate &&
-                i.InterviewDate <= endDate)
+        List<Interview> interviews = Context.Interviews
+            .Where(i => i.InterviewDate >= startDate && i.InterviewDate <= endDate)
             .OrderBy(i => i.InterviewDate)
-            .ToListAsync();
+            .ToList();
+
+        if (interviews.Count == 0)
+        {
+            return NotFound("No interviews found in this date range");
+        }
 
         return Ok(interviews);
     }
 
     // Case 8: GET Sort
-    // Get upcoming interviews ordered chronologically
-    [HttpGet("upcoming")]
-    public async Task<IActionResult> GetUpcomingInterviews()
+    [HttpGet("Sort upcoming interviews chronologically")]
+    public IActionResult SortUpcomingInterviews()
     {
-        var interviews = await _context.Interviews
-            .AsNoTracking()
+        List<Interview> interviews = Context.Interviews
             .Where(i => i.InterviewDate >= DateTime.Now)
             .OrderBy(i => i.InterviewDate)
-            .ToListAsync();
+            .ToList();
+
+        if (interviews.Count == 0)
+        {
+            return NotFound("No upcoming interviews found");
+        }
 
         return Ok(interviews);
     }
-}
-
-// Data required when creating an interview
-public class CreateInterviewRequest
-{
-    public DateTime InterviewDate { get; set; }
-
-    public string InterviewType { get; set; } = string.Empty;
-
-    public string InterviewStage { get; set; } = string.Empty;
-
-    public int ApplicationID { get; set; }
-}
-
-// Data required when rescheduling an interview
-public class RescheduleInterviewRequest
-{
-    public DateTime InterviewDate { get; set; }
-
-    public string InterviewType { get; set; } = string.Empty;
-}
-
-// Data required when recording the result
-public class UpdateInterviewResultRequest
-{
-    public string InterviewStage { get; set; } = string.Empty;
-
-    public string? Result_Offer { get; set; }
 }
