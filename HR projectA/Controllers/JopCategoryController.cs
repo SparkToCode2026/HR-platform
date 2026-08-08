@@ -1,128 +1,83 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectX.Models;
 
 namespace ProjectX.Controllers;
-
 [ApiController]
-[Route("[controller]")]
+[Route("JopCategory_Controller")]
 public class JopCategoryController : ControllerBase
 {
-    private readonly ProjectContext Context;
+    private ProjectContext Context;
     
     public JopCategoryController(ProjectContext _context)
     {
         Context = _context;
     }
-
-    [HttpPost("add-new-category")]
+    [HttpPost(" add new category")]
     public IActionResult ADD_NewCategory(JopCategory C)
     {
         Context.JopCategories.Add(C);
         Context.SaveChanges();
-        return Ok("New category added successfully.");
+        return Ok("new category is added:");
     }
-
-    [HttpPatch("update-category-name")]
-    public IActionResult update_CategoryName(int id, string Name)
+    [HttpPatch("update a category")]
+    public IActionResult update_CategoryName(int id, String Name)
     {
         JopCategory Category = Context.JopCategories.FirstOrDefault(C => C.JopCategoryid == id);
-        
-        // Check if category exists
-        if (Category == null)
-        {
-            return NotFound($"Category with ID {id} was not found.");
-        }
-
         Category.JopCategoryName = Name;
         Context.JopCategories.Update(Category);
         Context.SaveChanges();
-        return Ok($"Category ID {id} updated correctly to name: {Name}");
+        return Ok("Correctly updated: Name");
     }
-
-    [HttpPatch("update-category-status")]
+[HttpPatch("update Category status")]
     public IActionResult UpdateStatus(int id, string Status)
     {
         JopCategory Category = Context.JopCategories.FirstOrDefault(C => C.JopCategoryid == id);
-        
-        // Check if category exists
-        if (Category == null)
-        {
-            return NotFound($"Category with ID {id} was not found.");
-        }
-
         Category.CategorysTATUS = Status;
         Context.JopCategories.Update(Category);
         Context.SaveChanges();
-        return Ok($"Category status updated correctly to: {Status}");
+        return Ok("Correctly updated : status");
     }
-
-    [HttpDelete("delete-category")]
-    public IActionResult DeleteCategory(string Name)
+[HttpDelete("Delete Category")]
+    public IActionResult DeleteCategory(String Name)
     {
         JopCategory Category = Context.JopCategories.FirstOrDefault(C => C.JopCategoryName == Name);
-        
-        // Check if category exists
-        if (Category == null)
-        {
-            return NotFound($"Category with name '{Name}' was not found.");
-        }
-
         Context.JopCategories.Remove(Category);
         Context.SaveChanges();
-        return Ok($"'{Category.JopCategoryName}' was removed successfully.");
-    }
+        return Ok($"{Category.JopCategoryName} is removed succesefully");
 
-    [HttpGet("view-all-categories")]
+    }
+[HttpGet("View all Categories,")]
     public IActionResult ViewAllCategories()
     {
+        int JopNumber = 0;
         var Categories = Context.JopCategories.Select(c => new
         {
             CategoryName = c.JopCategoryName,
             TotalJobsAvailable = c.JopPosting.Sum(jp => jp.PositionsAvailable)
         }).ToList();
 
-        if (!Categories.Any())
-        {
-            return NotFound("No categories found.");
-        }
-
         return Ok(Categories);
     }
-
-    [HttpGet("view-categories-detail")]
+[HttpGet("view Categories detail")]
     public IActionResult ViewCategoryDetails()
     {
         List<JopCategory> jopCategories = Context.JopCategories.ToList();
-        
-        if (!jopCategories.Any())
-        {
-            return NotFound("No category details found.");
-        }
-
         return Ok(jopCategories);
     }
-
-    [HttpGet("filter-categories-by-status")]
+[HttpGet("Filter Cateogries by status")]
     public IActionResult FilterCategories()
     {
-        List<JopCategory> jopCategories = Context.JopCategories
-            .Where(C => C.CategorysTATUS == "Active")
-            .ToList();
-
-        if (!jopCategories.Any())
-        {
-            return NotFound("No active categories found.");
-        }
-
+        List<JopCategory> jopCategories = Context.JopCategories.Where(C => C.CategorysTATUS == "Active").ToList();
         return Ok(jopCategories);
-    }
 
+    }
     [HttpGet("GetJobPostingsCountByCategory")]
     public IActionResult GetJobPostingsCountByCategory()
     {
         var categoryCounts = Context.JobPostings
-            .GroupBy(jp => new { jp.JobCategoryID, jp.JobCategory.JopCategoryName })
+            .GroupBy(jp => new { jp.JobCategoryID, jp.JobCategory.JopCategoryName})
             .Select(group => new
             {
                 CategoryId = group.Key.JobCategoryID,
@@ -130,11 +85,6 @@ public class JopCategoryController : ControllerBase
                 TotalPostings = group.Count()
             })
             .ToList();
-
-        if (!categoryCounts.Any())
-        {
-            return NotFound("No job posting counts found.");
-        }
 
         return Ok(categoryCounts);
     }
