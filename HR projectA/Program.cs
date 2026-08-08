@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 
 using Microsoft.OpenApi.Models;
+using ProjectX.Controllers;
 
 namespace ProjectX;
 
@@ -47,6 +48,8 @@ public class Program
                 }
             });
         });
+        // Register EmailSender in the Dependency Injection container
+        builder.Services.AddTransient<EmailSender>();
 
         var app = builder.Build();
 
