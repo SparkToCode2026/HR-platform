@@ -30,12 +30,10 @@ public class InterviewsController : ControllerBase
 
         Context.Interviews.Add(I);
         Context.SaveChanges();
-        
-        string candidateEmail = Context.Applications.
-            .Where(a => a.ApplicationID == I.ApplicationID)
-            .Select(a => a.)
-            .FirstOrDefault();
-        string candidateEmail = "candidate@example.com"; // Fetch candidate's email from DB/Application
+
+        string CandidateEmail = Context.Applications.Where(a => a.ApplicationID == I.ApplicationID)
+            .Select(a => a.UserA.Email).FirstOrDefault();
+        string candidateEmail = CandidateEmail; // Fetch candidate's email from DB/Application
         string subject = "Interview Scheduled";
         string body = $"<h3>Interview Details</h3><p>Your interview is scheduled for <b>{I.InterviewDate}</b> via {I.InterviewType}.</p>";
 
