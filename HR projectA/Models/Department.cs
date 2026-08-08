@@ -16,7 +16,7 @@ public class Department
     [ForeignKey("CompanyA")]
     public int CompanyId { get; set; }
     [JsonIgnore]
-    public company CompanyA { get; set; }
+    public company? CompanyA { get; set; }
     
 
 }

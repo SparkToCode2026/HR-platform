@@ -27,11 +27,11 @@ namespace ProjectX.Models
 
         //nevegation property
         [JsonIgnore]
-        public List<Department> Departments { get; set; }
+        public List<Department>? Departments { get; set; }
         [JsonIgnore]
-        public List<JobPosting> JobPostings { get; set; }
+        public List<JobPosting>?JobPostings { get; set; }
         [JsonIgnore]
-        public List<Notification> Notifications { get; set; }
+        public List<Notification>? Notifications { get; set; }
 
          
     } }
