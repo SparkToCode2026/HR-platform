@@ -19,15 +19,15 @@ public class User
 
     //user navigation properties
 [JsonIgnore]
-    public Resume Resume { get; set; }
+    public Resume? Resume { get; set; }
 [JsonIgnore]
-    public List<UserSkill> UserSkills { get; set; }
+    public List<UserSkill>? UserSkills { get; set; }
 [JsonIgnore]
-    public List<Application> Applications { get; set; }
+    public List<Application>? Applications { get; set; }
 [JsonIgnore]
-    public List<Notification> Notifications { get; set; }
+    public List<Notification>? Notifications { get; set; }
 [JsonIgnore]
-    public List<Review> Reviews { get; set; }
+    public List<Review>? Reviews { get; set; }
  
 
 }
