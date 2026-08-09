@@ -114,7 +114,7 @@ namespace ProjectX.Controllers
         public IActionResult GetByTitle(string title)
         {
             List<Resume> resumes = context.Resumes
-                                          .Where(r => r.Title.Contains(title))
+                                          .Where(r => r.Title==title)
                                           .ToList();
 
             return Ok(resumes);
