@@ -47,27 +47,39 @@ namespace ProjectX.Controllers
         }
         
         // Case 3 (PUT/PATCH): Admin approval status update (e.g., mark as "Approved" or "Flagged").
-        [Authorize(Roles = "Admin")] // only administrators should be able to approve/flag reviews
         [HttpPatch("UpdateReviewStatus")]
-        public IActionResult UpdateReviewStatus(int id, string status)
+        public IActionResult UpdateReviewStatus(int id, int adminId, string status)
         {
-            Review r = context.Reviews.FirstOrDefault(r => r.ReviewId == id);
+            var user = context.users.FirstOrDefault(u => u.UserId == adminId);
+
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            if (user.Role != "Admin")
+            {
+                return Unauthorized("Only admins can change review status.");
+            }
+
+            var r = context.Reviews.FirstOrDefault(r => r.ReviewId == id);
 
             if (r == null)
             {
                 return NotFound("Review not found");
             }
 
-            if (status != "Approved" && status != "Flagged")
+            if (status == null ||
+                (status.ToLower() != "approved" && status.ToLower() != "flagged"))
             {
                 return BadRequest("Status must be 'Approved' or 'Flagged'.");
             }
-            
+
             r.Status = status;
 
             context.SaveChanges();
 
-            return Ok();
+            return Ok(r);
         }
         
         // Case 4 (DELETE): Delete an inappropriate or obsolete review.

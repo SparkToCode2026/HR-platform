@@ -25,12 +25,12 @@ namespace ProjectX.Models
         [ForeignKey("User")]
         public int UserId { get; set; }
         [JsonIgnore]
-        public User User { get; set; }
+        public User? User { get; set; }
 
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
         [JsonIgnore]
-        public company Company { get; set; }
+        public company? Company { get; set; }
     }
 }
 
