@@ -1,6 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-
-
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectX.Controllers;
 
@@ -19,6 +20,30 @@ public class Program
         // 1. Register Controllers here
         builder.Services.AddControllers(); 
         
+        // --- ADDED: JWT Authentication Configuration ---
+        var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+        var secretKey = jwtSettings["Secret"]!;
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                ClockSkew = TimeSpan.Zero // Removes default 5-min grace period for token expiry
+            };
+        });
+
         builder.Services.AddAuthorization();
         
         builder.Services.AddEndpointsApiExplorer();
@@ -48,6 +73,7 @@ public class Program
                 }
             });
         });
+        
         // Register EmailSender in the Dependency Injection container
         builder.Services.AddTransient<EmailSender>();
 
@@ -62,6 +88,8 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        // --- ADDED: Authentication Middleware ---
+        app.UseAuthentication(); // MUST be before UseAuthorization
         app.UseAuthorization();
 
         // 2. Map Controller Endpoints here
