@@ -1,9 +1,11 @@
 ﻿using HRP.Models;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using AutoMapper.Configuration.Annotations;
 
 namespace ProjectX.Models
-{
+{   
     [PrimaryKey(nameof(JobPostingID), nameof(Skill_id))]
     public class JobPostingSkill
     {
@@ -14,7 +16,8 @@ namespace ProjectX.Models
 
 
         [ForeignKey("skill")]
+        
         public int Skill_id { get; set; }
-        public Skill skill { get; set; }
+        public Skill? skill { get; set; }
     }
 }
