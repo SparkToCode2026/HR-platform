@@ -17,17 +17,19 @@ public class Application
    
     [ForeignKey("UserA")]
     public int UserId { get; set; }
-    [JsonIgnore]
-    public User UserA { get; set; }
+
+    [JsonIgnore] 
+    public User? UserA { get; set; }
+
     [ForeignKey("JobPosting")]
     public int JobPostingID { get; set; }
     [JsonIgnore]
     public JobPosting? JobPosting { get; set; }
     [JsonIgnore]
-    public List<Interview> Interviews { get; set; }
+    public List<Interview>? Interviews { get; set; }
     [JsonIgnore]
     public Offer? Offer { get; set; }
     [JsonIgnore]
-    private List<Review> _reviews { get; set; }
+    public List<Review>? _reviews { get; set; }
      
 }
