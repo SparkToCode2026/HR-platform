@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using ProjectX.Models;
 
-namespace ProjectX.Controllers;
+namespace ProjectX.Services;
 
 public class Jwtservice
 {
