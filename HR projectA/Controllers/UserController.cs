@@ -142,7 +142,7 @@ namespace ProjectX.Controllers
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(config["Jwt:Key"]);
+            var key = Encoding.ASCII.GetBytes(config["JwtSettings:Secret"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

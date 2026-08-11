@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using HRP.Models;
 using ProjectX.Models;
@@ -6,6 +7,7 @@ namespace ProjectX.Models;
 
 public class User
 {
+    [Key]
     [JsonIgnore]
     // user properties
     public int UserId { get; set; }

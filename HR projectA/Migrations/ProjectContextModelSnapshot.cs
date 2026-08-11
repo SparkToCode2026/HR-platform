@@ -49,7 +49,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Applications", (string)null);
+                    b.ToTable("Applications");
                 });
 
             modelBuilder.Entity("HRP.Models.Interview", b =>
@@ -81,7 +81,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("ApplicationID");
 
-                    b.ToTable("Interviews", (string)null);
+                    b.ToTable("Interviews");
                 });
 
             modelBuilder.Entity("HRP.Models.JobPosting", b =>
@@ -118,7 +118,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("JobCategoryID");
 
-                    b.ToTable("JobPostings", (string)null);
+                    b.ToTable("JobPostings");
                 });
 
             modelBuilder.Entity("HRP.Models.Offer", b =>
@@ -148,7 +148,7 @@ namespace ProjectX.Migrations
                     b.HasIndex("ApplicationID")
                         .IsUnique();
 
-                    b.ToTable("Offers", (string)null);
+                    b.ToTable("Offers");
                 });
 
             modelBuilder.Entity("ProjectX.Models.Department", b =>
@@ -174,7 +174,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("ProjectX.Models.JobPostingSkill", b =>
@@ -189,7 +189,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("Skill_id");
 
-                    b.ToTable("JobPostingSkills", (string)null);
+                    b.ToTable("JobPostingSkills");
                 });
 
             modelBuilder.Entity("ProjectX.Models.JopCategory", b =>
@@ -214,7 +214,7 @@ namespace ProjectX.Migrations
 
                     b.HasKey("JopCategoryid");
 
-                    b.ToTable("JopCategories", (string)null);
+                    b.ToTable("JopCategories");
                 });
 
             modelBuilder.Entity("ProjectX.Models.Notification", b =>
@@ -252,7 +252,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("ProjectX.Models.Resume", b =>
@@ -283,7 +283,7 @@ namespace ProjectX.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Resumes", (string)null);
+                    b.ToTable("Resumes");
                 });
 
             modelBuilder.Entity("ProjectX.Models.Review", b =>
@@ -317,7 +317,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ProjectX.Models.Skill", b =>
@@ -338,7 +338,7 @@ namespace ProjectX.Migrations
 
                     b.HasKey("Skill_id");
 
-                    b.ToTable("Skills", (string)null);
+                    b.ToTable("Skills");
                 });
 
             modelBuilder.Entity("ProjectX.Models.User", b =>
@@ -360,9 +360,8 @@ namespace ProjectX.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -374,7 +373,7 @@ namespace ProjectX.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("ProjectX.Models.UserSkill", b =>
@@ -389,7 +388,7 @@ namespace ProjectX.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSkills", (string)null);
+                    b.ToTable("UserSkills");
                 });
 
             modelBuilder.Entity("ProjectX.Models.company", b =>
@@ -433,7 +432,7 @@ namespace ProjectX.Migrations
 
                     b.HasKey("CompanyId");
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("HRP.Models.Application", b =>
@@ -559,7 +558,7 @@ namespace ProjectX.Migrations
             modelBuilder.Entity("ProjectX.Models.Review", b =>
                 {
                     b.HasOne("HRP.Models.Application", "Application")
-                        .WithMany()
+                        .WithMany("_reviews")
                         .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -599,6 +598,8 @@ namespace ProjectX.Migrations
                     b.Navigation("Interviews");
 
                     b.Navigation("Offer");
+
+                    b.Navigation("_reviews");
                 });
 
             modelBuilder.Entity("HRP.Models.JobPosting", b =>
