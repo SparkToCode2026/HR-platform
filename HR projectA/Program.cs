@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectX.Controllers;
+using ProjectX.Services;
 
 namespace ProjectX;
 
@@ -76,6 +77,7 @@ public class Program
         
         // Register EmailSender in the Dependency Injection container
         builder.Services.AddTransient<EmailSender>();
+        builder.Services.AddScoped<Jwtservice>(); // ✅ Clean & clear
 
         var app = builder.Build();
 
