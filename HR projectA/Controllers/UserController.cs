@@ -6,6 +6,7 @@ using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ProjectX.DTOs;
 
 namespace ProjectX.Controllers
 {
@@ -27,12 +28,29 @@ namespace ProjectX.Controllers
         [HttpPost]
         [Route("Register")]
 
-        public IActionResult Register(User u)
+        [HttpPost("Register")]
+        public IActionResult Register([FromBody] RegisterDto dto)
         {
-            u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(u.PasswordHash);
-            context.users.Add(u);
+            // 1. Check if email exists
+            if (context.users.Any(u => u.Email == dto.Email))
+            {
+                return BadRequest(new { message = "Email already registered." });
+            }
+
+            // 2. Map RegisterDto values to the User database model
+            var newUser = new User
+            {
+                Username = dto.Name,
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password), // Hash plain password
+                Role = string.IsNullOrEmpty(dto.Role) ? "Candidate" : dto.Role
+            };
+
+            // 3. Save to database
+            context.users.Add(newUser);
             context.SaveChanges();
-            return Ok(u.UserId);
+
+            return Ok(new { message = "Registration successful!" });
         }
 
         // PUT: Update Profile
@@ -112,11 +130,13 @@ namespace ProjectX.Controllers
         }
 
         //login with JWT 
+        // Login with JWT
         [HttpPost("Login")]
-        public IActionResult Login(string email, string password)
+        public IActionResult Login([FromBody] LoginDto model)
         {
-            var user = context.users.FirstOrDefault(x => x.Email == email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            var user = context.users.FirstOrDefault(x => x.Email == model.Email);
+    
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
                 return Unauthorized("Invalid credentials");
             }
@@ -127,16 +147,21 @@ namespace ProjectX.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                    new(ClaimTypes.Role, user.Role)
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-            return Ok(new { Token = tokenString });
+
+            return Ok(new AuthResponseDto
+            {
+                Token = tokenHandler.WriteToken(token),
+                Email = user.Email,
+                Role = user.Role
+            });
         }
 
 
