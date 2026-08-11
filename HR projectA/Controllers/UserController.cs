@@ -27,8 +27,7 @@ namespace ProjectX.Controllers
         //Post :Register User\Employee\Admin
         [HttpPost]
         [Route("Register")]
-
-        [HttpPost("Register")]
+        
         public IActionResult Register([FromBody] RegisterDto dto)
         {
             // 1. Check if email exists
@@ -43,7 +42,8 @@ namespace ProjectX.Controllers
                 Username = dto.Name,
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password), // Hash plain password
-                Role = string.IsNullOrEmpty(dto.Role) ? "Candidate" : dto.Role
+                Role = string.IsNullOrEmpty(dto.Role) ? "Candidate" : dto.Role,
+                PhoneNumber= dto.PhoneNumber
             };
 
             // 3. Save to database
