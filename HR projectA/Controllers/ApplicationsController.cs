@@ -1,4 +1,5 @@
 using HRP.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectX.Models;
@@ -15,14 +16,14 @@ public class ApplicationsController : ControllerBase
     {
         Context = _Context;
     }
-
+    [Authorize (Roles = "Candidate")]
     [HttpPost("Add Application")]
     public void ADD_Application(Application A)
     {
         Context.Applications.Add(A);
         Context.SaveChanges();
     }
-
+    [Authorize(Roles = "Employer,Admin")]
     [HttpPatch("Update Application Status")]
     public IActionResult Update_Application_Status(int Id, string Status)
     {
@@ -39,6 +40,7 @@ public class ApplicationsController : ControllerBase
         return Ok("updated");
     }
 
+    [Authorize(Roles = "Employer,Admin,Candidate")]
     [HttpPatch("Update Application Job")]
     public IActionResult Update_Application_Job(int Id, int JobPostingId)
     {
@@ -53,7 +55,7 @@ public class ApplicationsController : ControllerBase
         Context.SaveChanges();
         return Ok("updated");
     }
-
+    [Authorize(Roles = "Employer,Admin")]
     [HttpDelete("Delete Application")]
     public IActionResult Remove_Application(int Id)
     {
@@ -67,7 +69,7 @@ public class ApplicationsController : ControllerBase
         Context.SaveChanges();
         return Ok("removed successfully");
     }
-
+    [Authorize(Roles = "Employer,Admin")]
     [HttpGet("Get All Application")]
     public IActionResult GetAllApplications()
     {
@@ -84,7 +86,7 @@ public class ApplicationsController : ControllerBase
 
         return Ok(applications);
     }
-
+    [Authorize(Roles = "Candidate,Employer,Admin")]
     [HttpGet("Get applicationinfo")]
     public IActionResult Getapplication(int id)
     {
@@ -101,7 +103,7 @@ public class ApplicationsController : ControllerBase
 
         return Ok(AppA);
     }
-
+    [Authorize(Roles = "Employer,Admin")]
     [HttpGet("filter applications by job posting")]
     public IActionResult FilterApplications(int id)
     {
@@ -116,7 +118,7 @@ public class ApplicationsController : ControllerBase
 
         return Ok(ApplicationsB);
     }
-
+    [Authorize(Roles = "Employer,Admin")]
     [HttpGet("Sort Application by date")]
     public IActionResult SortApplication()
     {

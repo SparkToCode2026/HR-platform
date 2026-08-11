@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectX.Models;
 
@@ -18,6 +19,7 @@ namespace ProjectX.Controllers
 
 
         // Case 1 - POST
+        [Authorize (Roles = "Candidate")]
         [HttpPost("AddResume")]
         public IActionResult AddResume(Resume r)
         {
@@ -29,6 +31,7 @@ namespace ProjectX.Controllers
 
 
         // Case 2 - PATCH (Update Summary)
+        [Authorize (Roles = "Candidate")]
         [HttpPatch("UpdateSummary")]
         public IActionResult UpdateSummary(int id, string newSummary)
         {
@@ -48,6 +51,7 @@ namespace ProjectX.Controllers
 
 
         // Case 3 - PATCH (Update Title)
+        [Authorize (Roles = "Candidate")]
         [HttpPatch("UpdateTitle")]
         public IActionResult UpdateTitle(int id, string newTitle)
         {
@@ -66,6 +70,7 @@ namespace ProjectX.Controllers
         }
 
         // Case 4 - DELETE
+        [Authorize (Roles = "Candidate")]
         [HttpDelete("RemoveResume")]
         public IActionResult RemoveResume(int id)
         {
@@ -83,6 +88,7 @@ namespace ProjectX.Controllers
         }
 
         // Case 5 - GET ALL (Include User)
+        [Authorize (Roles = "Admin,Employee")]
         [HttpGet("GetAllResumes")]
         public IActionResult GetAllResumes()
         {
@@ -94,6 +100,7 @@ namespace ProjectX.Controllers
         }
 
         // Case 6 - GET BY ID
+        [Authorize (Roles = "Candidate,Admin,Employee")]
         [HttpGet("GetResume")]
         public IActionResult GetResume(int id)
         {
@@ -110,6 +117,7 @@ namespace ProjectX.Controllers
         }
 
         // Case 7 - GET FILTER
+        [Authorize (Roles = ",Candidate,Admin,Employee")]
         [HttpGet("GetByTitle")]
         public IActionResult GetByTitle(string title)
         {
@@ -121,6 +129,7 @@ namespace ProjectX.Controllers
         }
 
         // Count total number of resume records
+        [Authorize (Roles = "Admin,Employee")]
         [HttpGet("CountResumes")]
         public IActionResult CountResumes()
         {
