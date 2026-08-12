@@ -19,7 +19,7 @@ namespace ProjectX.Controllers
         }
 
         // POST: Register Company
-        [Authorize (Roles = ("Employee,Admin"))]
+        [Authorize (Roles = ("Employee"))]
         [HttpPost("Register")]
         public IActionResult Register(CreateCompanyDto dto )
         {
@@ -41,7 +41,7 @@ namespace ProjectX.Controllers
              context.SaveChanges();
              return Ok(Company);
         }
-        [HttpPatch("{id}/verify")]
+        [HttpPatch("verify")]
         [Authorize(Roles = "Admin")] 
         public IActionResult VerifyCompany(int id, [FromBody] UpdateCompanyVerificationDto dto)
         {
@@ -59,20 +59,41 @@ namespace ProjectX.Controllers
         }
 
         // PUT: Update Company 
-        [Authorize (Roles = ("Employee,Admin"))]
+        [Authorize (Roles = ("Employee"))]
         [HttpPut("UpdateCompany")]
-        public IActionResult UpdateCompany(int id, company newCompany)
+        public IActionResult UpdateCompany(int id, [FromBody]  CreateCompanyDto dto)
         {
-            var c = context.Companies.FirstOrDefault(x => x.CompanyId == id);
-            if (c == null) return NotFound();
+           
+            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
 
-            c.CompanyName = newCompany.CompanyName;
-            c.CompanyDescription = newCompany.CompanyDescription;
-            c.CompanyWebsite = newCompany.CompanyWebsite;
-            c.Phone = newCompany.Phone;
-            c.Email = newCompany.Email;
-            c.LocationStreet = newCompany.LocationStreet;
+            if (string.IsNullOrEmpty(companyIdClaim) || !int.TryParse(companyIdClaim, out int employerCompanyId))
+            {
+                return Forbid(); 
+            }
+
+           
+            if (employerCompanyId != id)
+            {
+                return Forbid(); 
+            }
+
+            // 3. Retrieve target company profile
+            var c = context.Companies.FirstOrDefault(x => x.CompanyId == id);
+            if (c == null)
+            {
+                return NotFound("Company not found.");
+            }
+            
+            c.CompanyName = dto.Name;
+            c.CompanyDescription = dto.Description;
+            c.CompanyWebsite = dto.WebsiteUrl;
+            c.Industry = dto.Industry;
+            c.Phone = dto.Phone;
+            c.Email = dto.Email;
+            c.LocationStreet = dto.Location;
+
             context.SaveChanges();
+
             return Ok("Company updated");
         }
 
