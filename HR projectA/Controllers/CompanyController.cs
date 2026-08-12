@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectX.Models;
 
 namespace ProjectX.Controllers
@@ -16,6 +17,7 @@ namespace ProjectX.Controllers
         }
 
         // POST: Register Company
+        [Authorize (Roles = ("Employee,Admin"))]
         [HttpPost("Register")]
         public IActionResult Register(company c)
         {
@@ -25,6 +27,7 @@ namespace ProjectX.Controllers
         }
 
         // PUT: Update Company 
+        [Authorize (Roles = ("Employee,Admin"))]
         [HttpPut("UpdateCompany")]
         public IActionResult UpdateCompany(int id, company newCompany)
         {
@@ -54,6 +57,7 @@ namespace ProjectX.Controllers
         }
 
         //Delete: Delete Company
+        [Authorize (Roles = ("Admin"))]
         [HttpDelete("DeleteCompany")]
         public IActionResult RemoveCompany(int id)
         {
@@ -65,7 +69,7 @@ namespace ProjectX.Controllers
             return Ok("Company removed successfully");
         }
 
-        // 
+        [Authorize (Roles = ("Employee,Admin,Candidate"))]
         // GET: Get All Companies
         [HttpGet("GetAllCompanies")]
         public IActionResult GetAllCompanies()
@@ -75,6 +79,7 @@ namespace ProjectX.Controllers
         }
 
         // GET: Get Company by Id
+        [Authorize (Roles = ("Employee,Admin"))]
         [HttpGet("GetCompany")]
         public IActionResult GetCompany(int id)
         {
@@ -83,6 +88,7 @@ namespace ProjectX.Controllers
         }
 
         // GET: Filter Companies
+        [Authorize (Roles = ("Employee,Admin,Candidate"))]
         [HttpGet("FilterByIndustry")]
         public IActionResult FilterByIndustry(string industry)
         {
@@ -91,6 +97,7 @@ namespace ProjectX.Controllers
         }
 
         // GET: Aggregate JobPostings
+        [Authorize (Roles = ("Employee,Admin,Candidate"))]
         [HttpGet("AggregateJobPostings")]
         public IActionResult AggregateJobPostings()
         {
