@@ -349,6 +349,9 @@ namespace ProjectX.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -372,6 +375,8 @@ namespace ProjectX.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("users");
                 });
@@ -572,6 +577,15 @@ namespace ProjectX.Migrations
                     b.Navigation("Application");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProjectX.Models.User", b =>
+                {
+                    b.HasOne("ProjectX.Models.company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("ProjectX.Models.UserSkill", b =>
