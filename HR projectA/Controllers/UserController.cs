@@ -34,7 +34,9 @@ namespace ProjectX.Controllers
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Role = string.IsNullOrEmpty(dto.Role) ? "Candidate" : dto.Role,
-                PhoneNumber = dto.PhoneNumber
+                PhoneNumber = dto.PhoneNumber,
+                CompanyId = dto.CompanyId
+                
             };
 
             _context.users.Add(newUser);
@@ -91,16 +93,16 @@ namespace ProjectX.Controllers
             return Ok("Password changed");
         }
 
-        // DELETE: Deactivate User
+        // DELETE:  User
         [HttpDelete("Deactivate")]
         public IActionResult Deactivate(int id)
         {
             var u = _context.users.FirstOrDefault(x => x.UserId == id);
             if (u == null) return NotFound();
 
-            u.IsActive = false;
+            _context.users.Remove(u);
             _context.SaveChanges();
-            return Ok("User deactivated");
+            return Ok("User deleted");
         }
 
         // GET: Get all users
