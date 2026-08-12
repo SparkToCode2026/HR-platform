@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProjectX.DTOs;
 using ProjectX.Models;
 
 namespace ProjectX.Controllers
@@ -19,11 +21,41 @@ namespace ProjectX.Controllers
         // POST: Register Company
         [Authorize (Roles = ("Employee,Admin"))]
         [HttpPost("Register")]
-        public IActionResult Register(company c)
+        public IActionResult Register(CreateCompanyDto dto )
         {
-            context.Companies.Add(c);
+                var Company = new company
+                {
+                    CompanyName= dto.Name,
+                    Email = dto.Email,
+                    Phone = dto.Phone,
+                    CompanyDescription = dto.Description,
+                    Industry = dto.Industry,
+                    CompanyWebsite = dto.WebsiteUrl,
+                    LocationStreet = dto.Location,
+                    
+                    IsVerified = false,
+                };
+                
+            
+            context.Companies.Add(Company);
+             context.SaveChanges();
+             return Ok(Company);
+        }
+        [HttpPatch("{id}/verify")]
+        [Authorize(Roles = "Admin")] 
+        public IActionResult VerifyCompany(int id, [FromBody] UpdateCompanyVerificationDto dto)
+        {
+            var company = context.Companies.FirstOrDefault(c => c.CompanyId == id);
+    
+            if (company == null)
+            {
+                return NotFound("Company not found.");
+            }
+
+            company.IsVerified = dto.IsVerified;
             context.SaveChanges();
-            return Ok(c.CompanyId);
+
+            return Ok(new { message = $"Company verification status updated to {company.IsVerified}." });
         }
 
         // PUT: Update Company 
