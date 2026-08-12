@@ -17,7 +17,11 @@ public class User
     public string Role { get; set; }
     public int PhoneNumber { get; set; }
 
-    public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; } 
+    public int? CompanyId { get; set; }
+    [JsonIgnore]
+    public company? Company { get; set; }
+
 
     //user navigation properties
 [JsonIgnore]
