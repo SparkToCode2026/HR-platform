@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+  using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
@@ -26,7 +26,8 @@ public class Jwtservice
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+       
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
@@ -35,11 +36,17 @@ public class Jwtservice
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
+        // 2. Add CompanyId claim if the user is associated with a company
+        if (user.CompanyId.HasValue)
+        {
+            claims.Add(new Claim("CompanyId", user.CompanyId.Value.ToString()));
+        }
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Issuer = issuer,       // 👈 Explicitly writes "iss": "MyWebApi" into payload
-            Audience = audience,   // 👈 Explicitly writes "aud": "MyWebApiClients" into payload
+            Issuer = issuer,
+            Audience = audience, // Added Audience here as well since you defined it above
             Expires = DateTime.UtcNow.AddMinutes(60),
             SigningCredentials = creds
         };
