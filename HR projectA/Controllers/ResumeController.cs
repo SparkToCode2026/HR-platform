@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectX.DTOs;
 using ProjectX.Models;
 
 
@@ -18,21 +21,32 @@ namespace ProjectX.Controllers
 
 
         // Case 1 - POST
+        [Authorize (Roles = "Candidate")]
         [HttpPost("AddResume")]
-        public IActionResult AddResume(Resume r)
+        public IActionResult AddResume(CreateResumeDto dto)
         {
-            context.Resumes.Add(r);
+            int loggedInUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            Resume myResume = new Resume();
+            myResume.UserId = loggedInUserId;
+            myResume.Education = dto.Education;
+            myResume.Summary = dto.Summary;
+            myResume.Title = dto.Title;
+            context.Resumes.Add(myResume);
             context.SaveChanges();
 
-            return Ok(r.Resume_id);
+            // 2. Build the resume
+            return Ok("Resume successufully added");
         }
 
 
         // Case 2 - PATCH (Update Summary)
+        [Authorize (Roles = "Candidate")]
         [HttpPatch("UpdateSummary")]
-        public IActionResult UpdateSummary(int id, string newSummary)
+        public IActionResult UpdateSummary( string newSummary)
+
         {
-            Resume r = context.Resumes.FirstOrDefault(r => r.Resume_id == id);
+            int id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!); // we extract the user id from the token
+            Resume r = context.Resumes.FirstOrDefault(r => r.UserId == id);
 
             if (r == null)
             {
@@ -43,15 +57,17 @@ namespace ProjectX.Controllers
 
             context.SaveChanges();
 
-            return Ok();
+            return Ok("summery updated   ");
         }
 
 
-        // Case 3 - PATCH (Update Title)
+        // Case 3 - PATC (Update Title)
+        [Authorize (Roles = "Candidate")]
         [HttpPatch("UpdateTitle")]
-        public IActionResult UpdateTitle(int id, string newTitle)
+        public IActionResult UpdateTitle( string newTitle)
         {
-            Resume r = context.Resumes.FirstOrDefault(r => r.Resume_id == id);
+            int id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!); // we extract the user id from the token
+            Resume r = context.Resumes.FirstOrDefault(r => r.UserId== id);
 
             if (r == null)
             {
@@ -62,14 +78,16 @@ namespace ProjectX.Controllers
 
             context.SaveChanges();
 
-            return Ok();
+            return Ok("resume titel, updated successfully");
         }
 
         // Case 4 - DELETE
+        [Authorize (Roles = "Candidate")]
         [HttpDelete("RemoveResume")]
-        public IActionResult RemoveResume(int id)
+        public IActionResult RemoveResume()
         {
-            Resume r = context.Resumes.FirstOrDefault(r => r.Resume_id == id);
+            int id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!); // we extract the user id from the token
+            Resume r = context.Resumes.FirstOrDefault(r => r.UserId == id);
 
             if (r == null)
             {
@@ -83,6 +101,7 @@ namespace ProjectX.Controllers
         }
 
         // Case 5 - GET ALL (Include User)
+        [Authorize (Roles = "Admin,Employee")]
         [HttpGet("GetAllResumes")]
         public IActionResult GetAllResumes()
         {
@@ -94,12 +113,13 @@ namespace ProjectX.Controllers
         }
 
         // Case 6 - GET BY ID
+        [Authorize (Roles = "Admin,Employee")]
         [HttpGet("GetResume")]
-        public IActionResult GetResume(int id)
+        public IActionResult GetResume(int user_id)
         {
             Resume r = context.Resumes
                               .Include(r => r._user)
-                              .FirstOrDefault(r => r.Resume_id == id);
+                              .FirstOrDefault(r => r.UserId == user_id);
 
             if (r == null)
             {
@@ -110,6 +130,7 @@ namespace ProjectX.Controllers
         }
 
         // Case 7 - GET FILTER
+        [Authorize (Roles = "Admin,Employee")]
         [HttpGet("GetByTitle")]
         public IActionResult GetByTitle(string title)
         {
@@ -121,6 +142,7 @@ namespace ProjectX.Controllers
         }
 
         // Count total number of resume records
+        [Authorize (Roles = "Admin,Employee")]
         [HttpGet("CountResumes")]
         public IActionResult CountResumes()
         {

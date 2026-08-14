@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProjectX.DTOs;
 using ProjectX.Models;
 
 namespace ProjectX.Controllers
@@ -16,28 +19,79 @@ namespace ProjectX.Controllers
         }
 
         // POST: Register Company
+        [Authorize (Roles = ("Employee"))]
         [HttpPost("Register")]
-        public IActionResult Register(company c)
+        public IActionResult Register(CreateCompanyDto dto )
         {
-            context.Companies.Add(c);
+                var Company = new company
+                {
+                    CompanyName= dto.Name,
+                    Email = dto.Email,
+                    Phone = dto.Phone,
+                    CompanyDescription = dto.Description,
+                    Industry = dto.Industry,
+                    CompanyWebsite = dto.WebsiteUrl,
+                    LocationStreet = dto.Location,
+                    
+                    IsVerified = false,
+                };
+            context.Companies.Add(Company);
+             context.SaveChanges();
+             return Ok(Company);
+        }
+        [HttpPatch("verify")]
+        [Authorize(Roles = "Admin")] 
+        public IActionResult VerifyCompany(int id, [FromBody] UpdateCompanyVerificationDto dto)
+        {
+            var company = context.Companies.FirstOrDefault(c => c.CompanyId == id);
+    
+            if (company == null)
+            {
+                return NotFound("Company not found.");
+            }
+
+            company.IsVerified = dto.IsVerified;
             context.SaveChanges();
-            return Ok(c.CompanyId);
+
+            return Ok(new { message = $"Company verification status updated to {company.IsVerified}." });
         }
 
         // PUT: Update Company 
+        [Authorize (Roles = ("Employee"))]
         [HttpPut("UpdateCompany")]
-        public IActionResult UpdateCompany(int id, company newCompany)
+        public IActionResult UpdateCompany(int id, [FromBody]  CreateCompanyDto dto)
         {
-            var c = context.Companies.FirstOrDefault(x => x.CompanyId == id);
-            if (c == null) return NotFound();
+           
+            var companyIdClaim = User.FindFirst("CompanyId")?.Value;
 
-            c.CompanyName = newCompany.CompanyName;
-            c.CompanyDescription = newCompany.CompanyDescription;
-            c.CompanyWebsite = newCompany.CompanyWebsite;
-            c.Phone = newCompany.Phone;
-            c.Email = newCompany.Email;
-            c.LocationStreet = newCompany.LocationStreet;
+            if (string.IsNullOrEmpty(companyIdClaim) || !int.TryParse(companyIdClaim, out int employerCompanyId))
+            {
+                return Forbid(); 
+            }
+
+           
+            if (employerCompanyId != id)
+            {
+                return Forbid(); 
+            }
+
+            // 3. Retrieve target company profile
+            var c = context.Companies.FirstOrDefault(x => x.CompanyId == id);
+            if (c == null)
+            {
+                return NotFound("Company not found.");
+            }
+            
+            c.CompanyName = dto.Name;
+            c.CompanyDescription = dto.Description;
+            c.CompanyWebsite = dto.WebsiteUrl;
+            c.Industry = dto.Industry;
+            c.Phone = dto.Phone;
+            c.Email = dto.Email;
+            c.LocationStreet = dto.Location;
+
             context.SaveChanges();
+
             return Ok("Company updated");
         }
 
@@ -54,6 +108,7 @@ namespace ProjectX.Controllers
         }
 
         //Delete: Delete Company
+        [Authorize (Roles = ("Admin"))]
         [HttpDelete("DeleteCompany")]
         public IActionResult RemoveCompany(int id)
         {
@@ -65,7 +120,7 @@ namespace ProjectX.Controllers
             return Ok("Company removed successfully");
         }
 
-        // 
+        [Authorize (Roles = ("Employee,Admin,Candidate"))]
         // GET: Get All Companies
         [HttpGet("GetAllCompanies")]
         public IActionResult GetAllCompanies()
@@ -75,6 +130,7 @@ namespace ProjectX.Controllers
         }
 
         // GET: Get Company by Id
+        [Authorize (Roles = ("Employee,Admin"))]
         [HttpGet("GetCompany")]
         public IActionResult GetCompany(int id)
         {
@@ -83,6 +139,7 @@ namespace ProjectX.Controllers
         }
 
         // GET: Filter Companies
+        [Authorize (Roles = ("Employee,Admin,Candidate"))]
         [HttpGet("FilterByIndustry")]
         public IActionResult FilterByIndustry(string industry)
         {
@@ -91,6 +148,7 @@ namespace ProjectX.Controllers
         }
 
         // GET: Aggregate JobPostings
+        [Authorize (Roles = ("Employee,Admin,Candidate"))]
         [HttpGet("AggregateJobPostings")]
         public IActionResult AggregateJobPostings()
         {
