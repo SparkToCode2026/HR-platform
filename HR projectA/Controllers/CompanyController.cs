@@ -35,8 +35,6 @@ namespace ProjectX.Controllers
                     
                     IsVerified = false,
                 };
-                
-            
             context.Companies.Add(Company);
              context.SaveChanges();
              return Ok(Company);
