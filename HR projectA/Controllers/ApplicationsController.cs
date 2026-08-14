@@ -180,7 +180,7 @@ public class ApplicationsController : ControllerBase
 
 
     [Authorize(Roles = "Admin")]
-    [HttpGet("filter applications by job posting")]
+    [HttpGet("filter applications by jobposting id")]
     public IActionResult FilterApplications(int id)
     {
         List<Application> ApplicationsB = Context.Applications
