@@ -17,10 +17,11 @@ namespace ProjectX.Controllers
 
         public EmailSender(IConfiguration configuration)
         {
-            smtpServer = configuration.GetValue<string>("SmtpSettings:SmtpServer", "");
-            smtpPort = configuration.GetValue<int>("SmtpSettings:SmtpPort", 0);
-            smtpUsername = configuration.GetValue<string>("SmtpSettings:SmtpUsername", "");
-            smtpPassword = configuration.GetValue<string>("SmtpSettings:SmtpPassword", "");
+            // Match the exact keys from appsettings.json
+            smtpServer = configuration.GetValue<string>("SmtpSettings:Host", "");
+            smtpPort = configuration.GetValue<int>("SmtpSettings:Port", 587);
+            smtpUsername = configuration.GetValue<string>("SmtpSettings:Username", "");
+            smtpPassword = configuration.GetValue<string>("SmtpSettings:Password", "");
             senderEmail = configuration.GetValue<string>("SmtpSettings:SenderEmail", "no-reply@hrplatform.com");
             senderName = configuration.GetValue<string>("SmtpSettings:SenderName", "HR Recruitment Platform");
         }

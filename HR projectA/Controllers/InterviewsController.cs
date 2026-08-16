@@ -31,9 +31,8 @@ public class InterviewsController : ControllerBase
         Context.Interviews.Add(I);
         Context.SaveChanges();
 
-        string CandidateEmail = Context.Applications.Where(a => a.ApplicationID == I.ApplicationID)
-            .Select(a => a.UserA.Email).FirstOrDefault();
-        string candidateEmail = CandidateEmail; // Fetch candidate's email from DB/Application
+        // Trigger Domain Email Requirement
+        string candidateEmail = "candidate@example.com"; 
         string subject = "Interview Scheduled";
         string body = $"<h3>Interview Details</h3><p>Your interview is scheduled for <b>{I.InterviewDate}</b> via {I.InterviewType}.</p>";
 

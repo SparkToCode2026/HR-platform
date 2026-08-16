@@ -77,7 +77,7 @@ public class Program
         
         // Register EmailSender in the Dependency Injection container
         builder.Services.AddTransient<EmailSender>();
-        builder.Services.AddScoped<Jwtservice>(); // ✅ Clean & clear
+        builder.Services.AddScoped<Jwtservice>();
 
         var app = builder.Build();
 
@@ -90,11 +90,11 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        // --- ADDED: Authentication Middleware ---
-        app.UseAuthentication(); // MUST be before UseAuthorization
+       
+        app.UseAuthentication(); 
         app.UseAuthorization();
 
-        // 2. Map Controller Endpoints here
+       
         app.MapControllers(); 
 
         app.Run();
