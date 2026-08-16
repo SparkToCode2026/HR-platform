@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectX.Models;
@@ -15,12 +17,24 @@ public class DepartmentController:ControllerBase
     }
 
     [HttpPost("Add Department")]
-    public void ADD_Department(Department D)
+    [Authorize( Roles = "Employee")]
+    public IActionResult ADD_Department(Department D)
     {
-        Context.Departments.Add(D);
+        int CompanyId_user = int.Parse(User.FindFirst("CompanyId").Value!);
+        var DepartmentA = new Department
+        {
+            DepartmentName = D.DepartmentName,
+            DepartmentDesc = D.DepartmentDesc,
+            CompanyId = CompanyId_user,
+       
+        };
+        
+        Context.Departments.Add(DepartmentA);
         Context.SaveChanges();
+        return Ok("Great, department added successfully");
     }
     [HttpPatch("Update Department")]
+
     public IActionResult Update_Department(int Id, String Name)
     {
         Department Updated_depart = Context.Departments.FirstOrDefault(D => D.DepartmentID == Id);
@@ -49,6 +63,7 @@ public class DepartmentController:ControllerBase
         return Ok("updated ");
     }
     [HttpDelete("Delete Department")]
+    [Authorize (Roles = "Admin")]
     public IActionResult Remove_Department(int Id)
     {
         Department Removed_Department = Context.Departments.FirstOrDefault(C => C.DepartmentID == Id);
@@ -64,7 +79,7 @@ public class DepartmentController:ControllerBase
     } // enter the Department id , to see the comapny detalis that belong to
 
     [HttpGet("Get All Department")]
-    
+    [Authorize (Roles = "Admin")]
     public IActionResult GetAllDepartments()
     {
         List<Department> departments = Context.Departments
@@ -80,17 +95,31 @@ public class DepartmentController:ControllerBase
     }
 
     [HttpGet ("Get departmentinfo")]
+    [Authorize (Roles = "Admin,Employee")]
     public IActionResult Getdepartment(int id)
     {
-        Department DeptA = Context.Departments.FirstOrDefault(d => d.DepartmentID == id);
-        if (DeptA == null)
+        var role = User.FindFirstValue(ClaimTypes.Role)!;
+        Department departmentA = Context.Departments.FirstOrDefault(c => c.DepartmentID == id);
+        if (departmentA== null)
         {
             return NotFound("Department  not found");
         }
+        var companyid_depart = departmentA.CompanyId;
+        
+        if (role == "Employee")
+        {
+            var Companyid_user = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            if (int.Parse(Companyid_user) != companyid_depart)
+            {
+                return Forbid("invalid output for you");
+            }
+        }
+    
 
-        return Ok(DeptA);
+        return Ok(departmentA);
     }
-[HttpGet("filter departments by company")]
+[HttpGet("filter departments by company id")]
+[Authorize]
     public IActionResult FilterDepartments(int id)
     {
         List<Department> DepartmensB = Context.Departments.Where(D => D.CompanyId == id).ToList();
@@ -102,6 +131,7 @@ public class DepartmentController:ControllerBase
 
     }
 [HttpGet("Sort Department alphabatically")]
+[Authorize]
     public IActionResult SortDepartment(){
         List<Department> departments = Context.Departments
             .OrderBy(d => d.DepartmentName)

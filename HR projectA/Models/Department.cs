@@ -12,7 +12,7 @@ public class Department
 
     public string DepartmentName { get; set; }
     public String DepartmentDesc { get; set; }
-    
+    [JsonIgnore]
     [ForeignKey("CompanyA")]
     public int CompanyId { get; set; }
     [JsonIgnore]

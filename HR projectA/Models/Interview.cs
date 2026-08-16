@@ -18,12 +18,13 @@ public class Interview
 
     public string InterviewStage { get; set; } = string.Empty;
 
-    public string? Result_Offer { get; set; }
+
+    public string? Result_Offer { get; set; } = "notyet";
 
     // Foreign Key
     public int ApplicationID { get; set; }
 
     // Navigation Property
     [JsonIgnore]
-    public Application Application { get; set; } = null!;
+    public Application? Application { get; set; } = null!;
 }
